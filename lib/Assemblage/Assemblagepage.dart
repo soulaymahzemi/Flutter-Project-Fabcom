@@ -4,6 +4,8 @@ import 'package:arames_project/colors/colors.dart';
 import 'package:arames_project/dashbord/UapList.dart';
 import 'package:flutter/material.dart';
 import '../dashbord/appbar.dart';
+import 'classe .dart';
+import 'indicator.dart';
 
 class Ligne extends StatefulWidget {
   const Ligne({super.key});
@@ -14,15 +16,14 @@ class Ligne extends StatefulWidget {
 
 class _LigneState extends State<Ligne> {
   List<bool> _isListVisible1 = [false, false, false];
+  List<bool> _showTimePage = [false, false, false];
 
   void _toggleListVisibility(int index) {
     setState(() {
       _isListVisible1[index] = !_isListVisible1[index];
+      _showTimePage[index] = _isListVisible1[index];
     });
   }
-
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -33,84 +34,276 @@ class _LigneState extends State<Ligne> {
           _ListCard(
             title: 'TBS',
             subtitle: 'Ligne',
+            TimePage1: TimePage(),
             imagePath: 'assets/images/mach.png',
+             showTimePage:_showTimePage[0],
             isListVisible: _isListVisible1[0],
             onToggleVisibility: () => _toggleListVisibility(0),
             contentwidget: TBScontent(),
+           
           ),
           SizedBox(height: 10),
           _ListCard(
-            title: 'SOVEMA1',
-            subtitle: 'Ligne',
-            imagePath: 'assets/images/mach.png',
-            isListVisible: _isListVisible1[1],
-            onToggleVisibility: () => _toggleListVisibility(1),
-            contentwidget: Sovema1content()
-          ),
+              title: 'SOVEMA1',
+              subtitle: 'Ligne',
+              TimePage1: TimePage(),
+              imagePath: 'assets/images/mach.png',
+              isListVisible: _isListVisible1[1],
+              onToggleVisibility: () => _toggleListVisibility(1),
+              contentwidget: Sovema1content(),
+              showTimePage: _showTimePage[1],
+              ),
+             
           SizedBox(height: 10),
           _ListCard(
             title: 'SOVEMA2',
+           TimePage1: TimePage(),
             subtitle: 'Ligne',
             imagePath: 'assets/images/mach.png',
             isListVisible: _isListVisible1[2],
             onToggleVisibility: () => _toggleListVisibility(2),
-            contentwidget: Sovema2content()
+            contentwidget: Sovema2content(),
+            showTimePage:_showTimePage[2],
           ),
         ],
       ),
     );
   }
-    // card1
-  Widget TBScontent(){
-    return  Column(
-                      children: [
-                       fun2('OF | Progression d\'OF', 'assets/images/of.png'),
-                       Container(
-                        constraints: BoxConstraints(maxHeight: 400),
-                         child: Uaplist(),
-                       ),
-                       fun2('KPI | Performance de l\'UAP', 'assets/images/iconKpi.webp'),
-                       Container(
 
-                       ),
-                       fun2('Process | Paramètres process', 'assets/images/process.png')
-                      ],
-                    );
+  // card1
+  Widget TBScontent() {
+    return Column(
+      children: [
+        fun2('OF | Progression d\'OF', 'assets/images/of.png'),
+        IndicateurPage(),
+        Container(
+          constraints: BoxConstraints(maxHeight: 400),
+          child: Listof(
+            items: [
+              ListItem(
+                  title: "N°OF",
+                  subtitle: "Numéro de l’ordre de fabrication",
+                  value: ""),
+              ListItem(
+                  title: "Réf Art",
+                  subtitle: "Référence de l’article à réaliser",
+                  value: ""),
+              ListItem(
+                  title: "Qté Obj",
+                  subtitle: "TQuantité objectif à réaliser",
+                  value: "0"),
+              ListItem(
+                  title: "Production",
+                  subtitle: "Quantité réalisée jusqu’à l’instant",
+                  value: "0"),
+            ],
+          ),
+        ),
+        fun2('KPI | Performance de l\'UAP', 'assets/images/iconKpi.webp'),
+        
+        Container(
+          constraints: BoxConstraints(maxHeight: 400),
+          child: Listof(items: [
+            ListItem(
+                title: "TRS",
+                subtitle: "Taux de rendement synthétique",
+                value: "0"),
+            ListItem(title: "TP", subtitle: "Taux de performance", value: "0"),
+            ListItem(
+                title: "TD", subtitle: "Taux de disponibilité", value: "0"),
+            ListItem(title: "TQ", subtitle: "Taux de qualité", value: "0"),
+            ListItem(title: "Tde", subtitle: "Taux déchet", value: "0"),
+          ]),
+        ),
+        fun2('Process | Paramètres process', 'assets/images/process.png'),
+        Container(
+          constraints: BoxConstraints(maxHeight: 400),
+          child: Listof(items: [
+            ListItem(
+                title: "TC Env [sec]",
+                subtitle: "Cadence réelle de la phase enveloppeuse",
+                value: "0"),
+            ListItem(
+                title: "TC COS [sec]",
+                subtitle: "Temps de cycle réel de la phase COS",
+                value: "0"),
+            ListItem(
+                title: "TC SC [sec]",
+                subtitle: "Temps de cycle réel soudure des connexions",
+                value: "0"),
+            ListItem(
+                title: "TC BC [sec]",
+                subtitle: "Temps de cycle réel soudure Bac/couvercle",
+                value: "0"),
+            ListItem(
+                title: "TC th [sec]",
+                subtitle: "Temps de cycle théorique de la ligne",
+                value: "0"),
+          ]),
+        ),
+        SizedBox(
+          height: 20,
+        ),
+      ],
+    );
   }
+
   //card2
-  Widget Sovema1content(){
-    return  Column(
-                      children: [
-                       fun2('OF | Progression d\'OF', 'assets/images/of.png'),
-                       Container(
-                        constraints: BoxConstraints(maxHeight: 400),
-                      
-                       ),
-                       fun2('KPI | Performance de l\'UAP', 'assets/images/iconKpi.webp'),
-                       Container(
+  Widget Sovema1content() {
+    return Column(
+      children: [
+        fun2('OF | Progression d\'OF', 'assets/images/of.png'),
+                IndicateurPage(),
 
-                       ),
-                       fun2('Process | Paramètres process', 'assets/images/process.png')
-                      ],
-                    );
+        Container(
+          constraints: BoxConstraints(maxHeight: 400),
+          child: Listof(
+            items: [
+              ListItem(
+                  title: "N°OF",
+                  subtitle: "Numéro de l’ordre de fabrication",
+                  value: ""),
+              ListItem(
+                  title: "Réf Art",
+                  subtitle: "Référence de l’article à réaliser",
+                  value: ""),
+              ListItem(
+                  title: "Qté Obj",
+                  subtitle: "TQuantité objectif à réaliser",
+                  value: "0"),
+              ListItem(
+                  title: "Production",
+                  subtitle: "Quantité réalisée jusqu’à l’instant",
+                  value: "0"),
+            ],
+          ),
+        ),
+        fun2('KPI | Performance de l\'UAP', 'assets/images/iconKpi.webp'),
+        Container(
+          constraints: BoxConstraints(maxHeight: 400),
+          child: Listof(items: [
+            ListItem(
+                title: "TRS",
+                subtitle: "Taux de rendement synthétique",
+                value: "0"),
+            ListItem(title: "TP", subtitle: "Taux de performance", value: "0"),
+            ListItem(
+                title: "TD", subtitle: "Taux de disponibilité", value: "0"),
+            ListItem(title: "TQ", subtitle: "Taux de qualité", value: "0"),
+            ListItem(title: "Tde", subtitle: "Taux déchet", value: "0"),
+          ]),
+        ),
+        fun2('Process | Paramètres process', 'assets/images/process.png'),
+        Container(
+          constraints: BoxConstraints(maxHeight: 400),
+          child: Listof(items: [
+            ListItem(
+                title: "TC Env [sec]",
+                subtitle: "Cadence réelle de la phase enveloppeuse",
+                value: "0"),
+            ListItem(
+                title: "TC COS [sec]",
+                subtitle: "Temps de cycle réel de la phase COS",
+                value: "0"),
+            ListItem(
+                title: "TC SC [sec]",
+                subtitle: "Temps de cycle réel soudure des connexions",
+                value: "0"),
+            ListItem(
+                title: "TC BC [sec]",
+                subtitle: "Temps de cycle réel soudure Bac/couvercle",
+                value: "0"),
+            ListItem(
+                title: "TC th [sec]",
+                subtitle: "Temps de cycle théorique de la ligne",
+                value: "0"),
+          ]),
+        ),
+        SizedBox(
+          height: 20,
+        ),
+      ],
+    );
   }
+
   //card3
-  Widget Sovema2content(){
-    return  Column(
-                      children: [
-                       fun2('OF | Progression d\'OF', 'assets/images/of.png'),
-                       Container(
-                        constraints: BoxConstraints(maxHeight: 400),
-                      
-                       ),
-                       fun2('KPI | Performance de l\'UAP', 'assets/images/iconKpi.webp'),
-                       Container(
+  Widget Sovema2content() {
+    return Column(
+      children: [
+        fun2('OF | Progression d\'OF', 'assets/images/of.png'),
+                IndicateurPage(),
 
-                       ),
-                       fun2('Process | Paramètres process', 'assets/images/process.png')
-                      ],
-                    );
+        Container(
+          constraints: BoxConstraints(maxHeight: 400),
+          child: Listof(
+            items: [
+              ListItem(
+                  title: "N°OF",
+                  subtitle: "Numéro de l’ordre de fabrication",
+                  value: "11111111111"),
+              ListItem(
+                  title: "Réf Art",
+                  subtitle: "Référence de l’article à réaliser",
+                  value: ""),
+              ListItem(
+                  title: "Qté Obj",
+                  subtitle: "TQuantité objectif à réaliser",
+                  value: "0"),
+              ListItem(
+                  title: "Production",
+                  subtitle: "Quantité réalisée jusqu’à l’instant",
+                  value: "0"),
+            ],
+          ),
+        ),
+        fun2('KPI | Performance de l\'UAP', 'assets/images/iconKpi.webp'),
+        Container(
+          constraints: BoxConstraints(maxHeight: 400),
+          child: Listof(items: [
+            ListItem(
+                title: "TRS",
+                subtitle: "Taux de rendement synthétique",
+                value: "0%"),
+            ListItem(title: "TP", subtitle: "Taux de performance", value: "0%"),
+            ListItem(
+                title: "TD", subtitle: "Taux de disponibilité", value: "0%"),
+            ListItem(title: "TQ", subtitle: "Taux de qualité", value: "0%"),
+            ListItem(title: "Tde", subtitle: "Taux déchet", value: "0%"),
+          ]),
+        ),
+        fun2('Process | Paramètres process', 'assets/images/process.png'),
+        Container(
+          constraints: BoxConstraints(maxHeight: 400),
+          child: Listof(items: [
+            ListItem(
+                title: "TC Env [sec]",
+                subtitle: "Cadence réelle de la phase enveloppeuse",
+                value: "0"),
+            ListItem(
+                title: "TC COS [sec]",
+                subtitle: "Temps de cycle réel de la phase COS",
+                value: "0"),
+            ListItem(
+                title: "TC SC [sec]",
+                subtitle: "Temps de cycle réel soudure des connexions",
+                value: "0"),
+            ListItem(
+                title: "TC BC [sec]",
+                subtitle: "Temps de cycle réel soudure Bac/couvercle",
+                value: "0"),
+            ListItem(
+                title: "TC th [sec]",
+                subtitle: "Temps de cycle théorique de la ligne",
+                value: "0"),
+          ]),
+        ),
+        SizedBox(
+          height: 20,
+        ),
+      ],
+    );
   }
+
 //******************************* */
   Widget _ListCard({
     required String title,
@@ -119,7 +312,8 @@ class _LigneState extends State<Ligne> {
     required bool isListVisible,
     required VoidCallback onToggleVisibility,
     required Widget contentwidget,
-
+    required Widget TimePage1,
+    required bool showTimePage,
   }) {
     return Card(
       elevation: 4,
@@ -147,14 +341,23 @@ class _LigneState extends State<Ligne> {
               title: Text(
                 title,
                 textAlign: TextAlign.center,
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30, color: textcolor),
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 30,
+                    color: textcolor),
               ),
               subtitle: Text(
                 subtitle,
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: textcolor),
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20,
+                    color: textcolor),
               ),
             ),
           ),
+          SizedBox(height: 10,),
+         if(showTimePage) TimePage1,
+
           Image.asset(imagePath),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -168,16 +371,18 @@ class _LigneState extends State<Ligne> {
                       style: TextStyle(fontSize: 10),
                     ),
                     IconButton(
+                      iconSize: 30,
                       onPressed: onToggleVisibility,
                       icon: Icon(
-                        isListVisible ? Icons.arrow_circle_up_rounded : Icons.arrow_circle_down_rounded,
+                        
+                        isListVisible
+                            ? Icons.arrow_circle_up_rounded
+                            : Icons.arrow_circle_down_rounded,
                       ),
                     ),
                   ],
                 ),
                 if (isListVisible) contentwidget,
-                    
-                
               ],
             ),
           ),
@@ -185,8 +390,9 @@ class _LigneState extends State<Ligne> {
       ),
     );
   }
+
 //******************* */
-    Widget fun2(String title, String pathimage) {
+  Widget fun2(String title, String pathimage) {
     return Container(
       padding: EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -211,11 +417,11 @@ class _LigneState extends State<Ligne> {
               overflow: TextOverflow.ellipsis,
             ),
           ),
-        
-          
           Image.asset(
-            pathimage, width: 30,fit: BoxFit.contain,
-        ),
+            pathimage,
+            width: 30,
+            fit: BoxFit.contain,
+          ),
         ],
       ),
     );

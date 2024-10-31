@@ -8,6 +8,7 @@ import 'package:arames_project/Assemblage/Assemblagepage.dart';
 
 import '../colors/colors.dart';
 import 'eng.dart';
+
 class Homepage extends StatefulWidget {
   const Homepage({super.key});
 
@@ -57,7 +58,8 @@ class _HomepageState extends State<Homepage> {
                     children: [
                       Container(
                         decoration: BoxDecoration(
-                          borderRadius: BorderRadius.vertical(top: Radius.circular(10)),
+                          borderRadius:
+                              BorderRadius.vertical(top: Radius.circular(10)),
                           color: navbar,
                           boxShadow: [
                             BoxShadow(
@@ -98,6 +100,7 @@ class _HomepageState extends State<Homepage> {
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           IconButton(
+                            iconSize: 30,
                             onPressed: _toggleListVisibility,
                             icon: Icon(
                               _islistvisible
@@ -112,32 +115,41 @@ class _HomepageState extends State<Homepage> {
                           padding: const EdgeInsets.symmetric(horizontal: 10.0),
                           child: Column(
                             children: [
-                              fun1("KPI | Performance de l'UAP",'assets/images/iconKpi.webp'),
-
+                              fun1("KPI | Performance de l'UAP",
+                                  'assets/images/iconKpi.webp'),
                               Container(
                                 constraints: BoxConstraints(maxHeight: 400),
                                 child: Uaplist(),
                               ),
-                              
-                              SizedBox(height: 10,),
+                              SizedBox(
+                                height: 10,
+                              ),
                               fun1('OF | Running OFs', 'assets/images/of.png'),
                               Container(
                                 constraints: BoxConstraints(maxHeight: 400),
-                                child:OfSList() ,
+                                child: OfSList(),
                               ),
-                               SizedBox(height: 10,),
-                              fun1('Qté | Détail des quantités produites', 'assets/images/quantity.png'),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              fun1('Qté | Détail des quantités produites',
+                                  'assets/images/quantity.png'),
                               Container(
                                 constraints: BoxConstraints(maxHeight: 400),
-                                child:Quantiteslist() ,
+                                child: Quantiteslist(),
                               ),
-                               SizedBox(height: 10,),
-                              fun1('Eng | Performance énergétique', 'assets/images/eng.png'),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              fun1('Eng | Performance énergétique',
+                                  'assets/images/eng.png'),
                               Container(
                                 constraints: BoxConstraints(maxHeight: 400),
-                                child:Energielist() ,
+                                child: Energielist(),
                               ),
-                              SizedBox(height: 10,),
+                              SizedBox(
+                                height: 10,
+                              ),
                             ],
                           ),
                         ),

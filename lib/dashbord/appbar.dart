@@ -5,7 +5,6 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      // Custom design for your AppBar
       backgroundColor: navbar,
       elevation: 4.0,
       leading: 
@@ -17,22 +16,21 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       
       actions: [
         IconButton(
-          icon: Icon(Icons.arrow_back),
+          icon: Icon(Icons.arrow_back,color: Colors.black,),
           onPressed: () {
             Navigator.of(context).pop();
           },
         ),
         IconButton(
-          icon: Icon(Icons.account_circle),
+          icon: Icon(Icons.account_circle,color: Colors.black,),
           onPressed: () {
-            // Define any action here
+           
           },
         ),
       ],
     );
   }
 
-  // Define the size of the AppBar using `preferredSize`
   @override
   Size get preferredSize => Size.fromHeight(kToolbarHeight);
 }

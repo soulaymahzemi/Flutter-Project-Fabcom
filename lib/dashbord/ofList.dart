@@ -35,7 +35,7 @@ class OfSList extends StatelessWidget {
       );
   
   }
-  Widget _OfSList(String title, String subtitle, String value) {
+  Widget _OfSList(String title, String subtitle, dynamic value) {
     return ListTile(
       title: 
       Text(
@@ -52,9 +52,15 @@ class OfSList extends StatelessWidget {
               style: TextStyle(fontSize: 14),
             ),
           ),
-          Text(
-            value,
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.blue),
+          Container(
+              padding: EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                border: Border.all(color: Color.fromARGB(255, 99, 99, 99))
+              ),
+            child: Text(
+              value,
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, ),
+            ),
           ),
         ],
       ),

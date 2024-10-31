@@ -11,31 +11,30 @@ class Login extends StatefulWidget {
 class _LoginState extends State<Login> {
   final FocusNode _usernameFocusNode = FocusNode();
   final FocusNode _passwordFocusNode = FocusNode();
-  
-  Color _usernameLabelColor = Colors.grey; 
-  Color _passwordLabelColor = Colors.grey; 
+
+  Color _usernameLabelColor = Colors.grey;
+  Color _passwordLabelColor = Colors.grey;
   @override
   void initState() {
     super.initState();
 
-    // Listener for username field focus
     _usernameFocusNode.addListener(() {
       setState(() {
-        _usernameLabelColor = _usernameFocusNode.hasFocus ? Colors.yellow : Colors.grey;
+        _usernameLabelColor =
+            _usernameFocusNode.hasFocus ? Colors.yellow : Colors.grey;
       });
     });
 
-    // Listener for password field focus
     _passwordFocusNode.addListener(() {
       setState(() {
-        _passwordLabelColor = _passwordFocusNode.hasFocus ? Colors.yellow : Colors.grey;
+        _passwordLabelColor =
+            _passwordFocusNode.hasFocus ? Colors.yellow : Colors.grey;
       });
     });
   }
 
   @override
   void dispose() {
-    // Dispose of the focus nodes when the widget is removed from the widget tree
     _usernameFocusNode.dispose();
     _passwordFocusNode.dispose();
     super.dispose();
@@ -73,14 +72,15 @@ class _LoginState extends State<Login> {
                       focusNode: _usernameFocusNode,
                       decoration: InputDecoration(
                         labelText: 'Identifiant *',
-                        labelStyle: TextStyle(color: _usernameLabelColor), // Change label color based on focus
+                        labelStyle: TextStyle(color: _usernameLabelColor),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8.0),
-                          borderSide: BorderSide(color: Colors.grey), // Default border color
+                          borderSide: BorderSide(color: Colors.grey),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8.0),
-                          borderSide: BorderSide(color: Colors.yellow, width: 2), // Change border color on focus
+                          borderSide:
+                              BorderSide(color: Colors.yellow, width: 2),
                         ),
                       ),
                     ),
@@ -89,14 +89,15 @@ class _LoginState extends State<Login> {
                       focusNode: _passwordFocusNode,
                       decoration: InputDecoration(
                         labelText: 'Mot de passe *',
-                        labelStyle: TextStyle(color: _passwordLabelColor), // Change label color based on focus
+                        labelStyle: TextStyle(color: _passwordLabelColor),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8.0),
-                          borderSide: BorderSide(color: Colors.grey), // Default border color
+                          borderSide: BorderSide(color: Colors.grey),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(8.0),
-                          borderSide: BorderSide(color: Colors.yellow, width: 2), // Change border color on focus
+                          borderSide:
+                              BorderSide(color: Colors.yellow, width: 2),
                         ),
                       ),
                       obscureText: true, // Hide password input
@@ -108,22 +109,21 @@ class _LoginState extends State<Login> {
                         style: ElevatedButton.styleFrom(
                           primary: Colors.yellow,
                           onPrimary: Colors.black,
-                           padding: EdgeInsets.symmetric(horizontal: 32.0, vertical: 12.0), // Padding
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 32.0, vertical: 12.0), // Padding
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8.0), // Button border radius
+                            borderRadius: BorderRadius.circular(8.0),
                           ),
                         ),
-                        onPressed: () { 
-                         Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => Homepage()),
-                         );
-                          
-                          
-                          
-                          },
-                        child: Text('LOG IN',),
-                        
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => Homepage()),
+                          );
+                        },
+                        child: Text(
+                          'LOG IN',
+                        ),
                       ),
                     ),
                   ],
