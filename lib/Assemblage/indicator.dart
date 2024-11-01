@@ -1,15 +1,11 @@
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:flutter/material.dart';
 
-class IndicateurPage extends StatefulWidget {
-  @override
-  State<IndicateurPage> createState() => _IndicateurPageState();
-}
-
-class _IndicateurPageState extends State<IndicateurPage> {
+class IndicateurPage extends StatelessWidget {
+      final double percentage ; 
+  IndicateurPage({required this.percentage});
   @override
   Widget build(BuildContext context) {
-    double percentage = 0.0; 
 
     return Padding(
       padding: const EdgeInsets.all(10),
@@ -27,7 +23,7 @@ class _IndicateurPageState extends State<IndicateurPage> {
                   lineHeight: 10.0,
                   percent: percentage,
                   backgroundColor: Color(0xFFD5EDBC),
-                  progressColor: Colors.blue,
+                  progressColor: Colors.green,
                 ),
               ),
               SizedBox(width: 10),

@@ -39,7 +39,7 @@ class _LigneState extends State<Ligne> {
              showTimePage:_showTimePage[0],
             isListVisible: _isListVisible1[0],
             onToggleVisibility: () => _toggleListVisibility(0),
-            contentwidget: TBScontent(),
+            contentwidget: TBScontent(presentage: 0.1),
            
           ),
           SizedBox(height: 10),
@@ -50,7 +50,7 @@ class _LigneState extends State<Ligne> {
               imagePath: 'assets/images/mach.png',
               isListVisible: _isListVisible1[1],
               onToggleVisibility: () => _toggleListVisibility(1),
-              contentwidget: Sovema1content(),
+              contentwidget: Sovema1content(presentage: 0.3),
               showTimePage: _showTimePage[1],
               ),
              
@@ -62,7 +62,7 @@ class _LigneState extends State<Ligne> {
             imagePath: 'assets/images/mach.png',
             isListVisible: _isListVisible1[2],
             onToggleVisibility: () => _toggleListVisibility(2),
-            contentwidget: Sovema2content(),
+            contentwidget: Sovema2content(presentage: 0.99),
             showTimePage:_showTimePage[2],
           ),
         ],
@@ -71,11 +71,11 @@ class _LigneState extends State<Ligne> {
   }
 
   // card1
-  Widget TBScontent() {
+  Widget TBScontent({required double presentage}) {
     return Column(
       children: [
         fun2('OF | Progression d\'OF', 'assets/images/of.png'),
-        IndicateurPage(),
+        IndicateurPage(percentage: presentage,),
         Container(
           constraints: BoxConstraints(maxHeight: 400),
           child: Listof(
@@ -149,11 +149,11 @@ class _LigneState extends State<Ligne> {
   }
 
   //card2
-  Widget Sovema1content() {
+  Widget Sovema1content( {required double presentage}) {
     return Column(
       children: [
         fun2('OF | Progression d\'OF', 'assets/images/of.png'),
-                IndicateurPage(),
+                IndicateurPage(percentage: presentage,),
 
         Container(
           constraints: BoxConstraints(maxHeight: 400),
@@ -227,11 +227,11 @@ class _LigneState extends State<Ligne> {
   }
 
   //card3
-  Widget Sovema2content() {
+  Widget Sovema2content({required double presentage}) {
     return Column(
       children: [
         fun2('OF | Progression d\'OF', 'assets/images/of.png'),
-                IndicateurPage(),
+                IndicateurPage(percentage: presentage,),
 
         Container(
           constraints: BoxConstraints(maxHeight: 400),
@@ -367,8 +367,8 @@ class _LigneState extends State<Ligne> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'Poste: Après-midi',
-                      style: TextStyle(fontSize: 10),
+                      "Poste: ${PeriodeDay()}",
+                      style: TextStyle(fontSize: 15),
                     ),
                     IconButton(
                       iconSize: 30,
@@ -390,7 +390,8 @@ class _LigneState extends State<Ligne> {
       ),
     );
   }
-
+  //********* */
+ 
 //******************* */
   Widget fun2(String title, String pathimage) {
     return Container(
@@ -425,5 +426,18 @@ class _LigneState extends State<Ligne> {
         ],
       ),
     );
+  }
+  
+  PeriodeDay() {
+     final now = DateTime.now();
+  final hour = now.hour;
+
+  if (hour >= 6 && hour < 14) {
+    return "Matin";
+  } else if (hour >= 14 && hour < 22) {
+    return "Après-midi";
+  } else {
+    return "Nuit";
+  }
   }
 }

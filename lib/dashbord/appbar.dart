@@ -1,3 +1,4 @@
+import 'package:arames_project/authentification/login.dart';
 import 'package:flutter/material.dart';
 import '../colors/colors.dart';
 
@@ -6,14 +7,15 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     return AppBar(
       backgroundColor: navbar,
-      elevation: 4.0,
+      elevation:4.0,
+      leadingWidth: 150,
       leading: 
-         Image.asset(
-          'assets/images/logo.png',
-          fit: BoxFit.contain,
-          width: 40.0,
-        ),
       
+       Image.asset(
+            'assets/images/logo.png',
+            width: 60,
+            height: 60,
+                 ),
       actions: [
         IconButton(
           icon: Icon(Icons.arrow_back,color: Colors.black,),
@@ -23,9 +25,9 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         ),
         IconButton(
           icon: Icon(Icons.account_circle,color: Colors.black,),
-          onPressed: () {
-           
-          },
+         onPressed: () {
+            Navigator.push(context, MaterialPageRoute(builder: (context) => const Login()));
+          }
         ),
       ],
     );
