@@ -1,5 +1,7 @@
 import 'package:arames_project/dashbord/homepage.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -14,9 +16,9 @@ class _LoginState extends State<Login> {
 
   Color _usernameLabelColor = Colors.grey;
   Color _passwordLabelColor = Colors.grey;
-    final _formKey = GlobalKey<FormState>();
-        TextEditingController emailController = TextEditingController();
-        TextEditingController passwordController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
 
   @override
   void initState() {
@@ -42,6 +44,45 @@ class _LoginState extends State<Login> {
     _usernameFocusNode.dispose();
     _passwordFocusNode.dispose();
     super.dispose();
+  }
+
+  // Méthode pour envoyer les données de connexion au backend
+  Future<void> _login() async {
+    final response = await http.post(
+      Uri.parse(''), // Remplace par l'URL de ton API
+      body: {
+        'email': emailController.text,
+        'password': passwordController.text,
+      },
+    );
+
+    final Map<String, dynamic> responseData = json.decode(response.body);
+
+    if (responseData['status'] == 'success') {
+      // Si la connexion réussie, naviguer vers la page d'accueil
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => Homepage(
+            trsTotal: 0, // Replace with actual value if available
+            tpTotal: 0, // Replace with actual value if available
+            tdTotal: 0, // Replace with actual value if available
+            tqTotal: 0, // Replace with actual value if available
+            trTotal: 0,
+            nofTbs: 0,
+            nofSovema1: 0,
+            nofSovema2: 0,
+            QPTotal: 0,
+            // Replace with actual value if available
+          ),
+        ),
+      );
+    } else {
+      // Si les identifiants sont incorrects
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Identifiants incorrects')),
+      );
+    }
   }
 
   @override
@@ -96,7 +137,6 @@ class _LoginState extends State<Login> {
                         controller: passwordController,
                         focusNode: _passwordFocusNode,
                         decoration: InputDecoration(
-                          
                           labelText: 'Mot de passe *',
                           labelStyle: TextStyle(color: _passwordLabelColor),
                           border: OutlineInputBorder(
@@ -109,27 +149,42 @@ class _LoginState extends State<Login> {
                                 BorderSide(color: Colors.yellow, width: 2),
                           ),
                         ),
-                        obscureText: true, // Hide password input
+                        obscureText: true, // Masquer le mot de passe
                       ),
                       SizedBox(height: 20),
                       Container(
                         width: double.infinity,
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                            primary: Colors.yellow,
-                            onPrimary: Colors.black,
+                            foregroundColor: Colors.black,
+                            backgroundColor: Colors.yellow,
                             padding: EdgeInsets.symmetric(
                                 horizontal: 32.0, vertical: 12.0), // Padding
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(8.0),
                             ),
                           ),
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => Homepage()),
-                            );
-                          },
+                         
+                           onPressed: () {
+                            // _login,
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => Homepage(
+                                trsTotal: 0, 
+                                tpTotal: 0,  
+                                tdTotal: 0,  
+                                tqTotal: 0,  
+                                nofTbs:0,
+                                nofSovema1:0,
+                                nofSovema2:0,
+                                QPTotal: 0, 
+                                trTotal: 0,
+                                
+                              ),
+                            ),
+                          );
+                        },
                           child: Text(
                             'LOG IN',
                           ),

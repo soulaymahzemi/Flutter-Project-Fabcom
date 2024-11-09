@@ -1,14 +1,12 @@
-import 'package:arames_project/Assemblage/classe%20.dart';
 import 'package:flutter/material.dart';
-
 import '../colors/colors.dart';
 
-class Listof extends StatelessWidget {
-  final List<ListItem> items;
+class ListDisplay extends StatelessWidget {
+  final List<Map<String, String>> items;
 
-  const Listof({super.key, required this.items});
+  const ListDisplay({super.key, required this.items});
 
-  Widget _UAPLIST(String title, String subtitle, dynamic value) {
+  Widget _buildListItem(String title, String subtitle, String value) {
     return ListTile(
       title: Text(
         title,
@@ -23,23 +21,18 @@ class Listof extends StatelessWidget {
               style: TextStyle(fontSize: 14),
             ),
           ),
-         
-          Flexible(
-            child: Container(
-              padding: EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                border: Border.all(color: Color.fromARGB(255, 99, 99, 99))
-              ),
-              child: Text(
-                value,
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black),
-              ),
+          Container(
+            padding: EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              border: Border.all(color: Color.fromARGB(255, 99, 99, 99)),
+            ),
+            child: Text(
+              value,
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
           ),
         ],
-        
       ),
-
     );
   }
 
@@ -56,15 +49,21 @@ class Listof extends StatelessWidget {
             spreadRadius: 1,
             blurRadius: 5,
             offset: Offset(0, 5),
-          )
+          ),
         ],
       ),
-      child: ListView(
+      child: ListView.builder(
         shrinkWrap: true,
         physics: NeverScrollableScrollPhysics(),
-        children: items.map((item) {
-          return _UAPLIST(item.title, item.subtitle, item.value);
-        }).toList(),
+        itemCount: items.length,
+        itemBuilder: (context, index) {
+          final item = items[index];
+          return _buildListItem(
+            item['title'] ?? '',
+            item['subtitle'] ?? '',
+            item['value'] ?? '0',
+          );
+        },
       ),
     );
   }

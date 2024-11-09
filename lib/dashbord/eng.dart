@@ -23,8 +23,7 @@ class Energielist extends StatelessWidget {
         shrinkWrap: true, // Permet au ListView de s'adapter à son contenu
         physics: NeverScrollableScrollPhysics(), // Empêche le défilement
         children: [
-          _Energielist(
-              "Energie [KWh]", "Total consommation d'énergie active", "0"),
+          _Energielist("Energie [KWh]", "Total consommation d'énergie active", "0"),
           _Energielist("P [KW]", "Total puissance active", "0"),
           _Energielist("Q [KVAR]", "Total puissance réactive", "0"),
           _Energielist("cos ϕ [ ]", "Facteur de puissance", "0"),

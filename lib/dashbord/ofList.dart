@@ -29,7 +29,9 @@ class OfSList extends StatelessWidget {
              physics: NeverScrollableScrollPhysics(), // Empêche le défilement
                 children: [
                 _OfSList("TBS", "ligne d'Assemblage TBS", "0"),
-                
+                _OfSList("SOVEMA1", "ligne d'Assemblage SOVEMA1", "0"),
+                  _OfSList("SOVEMA2", "ligne d'Assemblage SOVEMA2", "0"),
+
                ],
            ),
       );

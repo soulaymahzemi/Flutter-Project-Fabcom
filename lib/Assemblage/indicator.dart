@@ -18,7 +18,7 @@ class IndicateurPage extends StatelessWidget {
           Row(
             children: [
               Container(
-                width: 270,
+                width: 250,
                 child: LinearPercentIndicator(
                   lineHeight: 10.0,
                   percent: percentage,
