@@ -5,10 +5,11 @@ import '../colors/colors.dart';
 
 class Listof extends StatelessWidget {
   final List<ListItem> items;
+  final Map<String, dynamic>? data; // Ajout des données dynamiques
 
-  const Listof({super.key, required this.items});
+  const Listof({super.key, required this.items, this.data});
 
-  Widget _UAPLIST(String title, String subtitle, dynamic value) {
+  Widget _UAPLIST(String title, String subtitle, dynamic value,Color shadowColor) {
     return ListTile(
       title: Text(
         title,
@@ -28,7 +29,17 @@ class Listof extends StatelessWidget {
             child: Container(
               padding: EdgeInsets.all(10),
               decoration: BoxDecoration(
-                border: Border.all(color: Color.fromARGB(255, 99, 99, 99))
+                color: Colors.white,
+                border: Border.all(color: Color.fromARGB(255, 99, 99, 99)),
+                borderRadius: BorderRadius.circular(8), 
+               boxShadow: [
+                BoxShadow(
+                  color: shadowColor, // Apply shadow color here
+                  spreadRadius: 0,
+                  blurRadius: 5,
+                  offset: Offset(0, 0),
+                )
+              ],
               ),
               child: Text(
                 value,
@@ -63,7 +74,7 @@ class Listof extends StatelessWidget {
         shrinkWrap: true,
         physics: NeverScrollableScrollPhysics(),
         children: items.map((item) {
-          return _UAPLIST(item.title, item.subtitle, item.value);
+          return _UAPLIST(item.title, item.subtitle, item.value,item.shadowColor);
         }).toList(),
       ),
     );

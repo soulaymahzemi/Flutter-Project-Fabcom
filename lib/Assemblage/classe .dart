@@ -1,20 +1,18 @@
+
+
+import 'dart:ui';
+
 class ListItem {
   final String title;
   final String subtitle;
-  final dynamic value; // // Peut être un entier, un double, ou une chaîne
+  final dynamic value;
+  final Color shadowColor; // Add shadow color property
 
-  ListItem({required this.title, required this.subtitle, required this.value});
-
- // Factory method to create a User object from a JSON map
-  factory ListItem.fromJson(Map<String, dynamic> json) {
-    return  ListItem(
-      value: json['value'],
-      title: json['title'],
-      subtitle: json['subtitle']
-    );
-  }
-
-
-
+  ListItem({
+    required this.title,
+    required this.subtitle,
+    required this.value,
+    required this.shadowColor  // Default to black if no color is provided
+  });
 
 }

@@ -1,32 +1,77 @@
-import 'package:arames_project/dashbord/UapList.dart';
-import 'package:arames_project/dashbord/list1.dart';
-import 'package:arames_project/dashbord/ofList.dart';
-import 'package:arames_project/dashbord/quantiteslist.dart';
+import 'package:arames_project/Assemblage/List2.dart';
+import 'package:arames_project/Assemblage/classe%20.dart';
+import 'package:arames_project/dashbord/men.dart';
 import 'package:flutter/material.dart';
 import 'package:arames_project/dashbord/appbar.dart';
 import 'package:arames_project/Assemblage/Assemblagepage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../colors/colors.dart';
-import 'eng.dart';
 
 class Homepage extends StatefulWidget {
-   final double trsTotal;
-  final double tpTotal;
-  final double tdTotal;
-  final double tqTotal;
-  final double trTotal;
-  final double QPTotal;
-   final int nofTbs;
-   final int nofSovema1;
-   final int nofSovema2;
-  const Homepage({super.key, required this.trsTotal, required this.tpTotal, required this.tdTotal, required this.tqTotal, required this.trTotal, required this.nofTbs, required this.nofSovema1, required this.nofSovema2, required this.QPTotal, });
+final String nofValue;
+final String nofSovema1;
+final String nofSovema2;
+final double QPTotal;
+final double trsTotal;
+final double tpTotal;
+final double tdTotal;
+final double tqTotal;
+final double trTotal;
+
+  const Homepage({super.key, required this.nofValue, required this.nofSovema1, required this.nofSovema2, required this.QPTotal, required this.trsTotal, required this.tpTotal, required this.tdTotal, required this.tqTotal, required this.trTotal,  });
 
   @override
   State<Homepage> createState() => _HomepageState();
 
+
 }
 
 class _HomepageState extends State<Homepage> {
+  late SharedPreferences prefs;
+  // Déclarez les variables que vous souhaitez stocker
+  late String nofValue;
+  late String nofSovema1;
+  late String nofSovema2;
+  late double QPTotal;
+  late double trsTotal;
+  late double tpTotal;
+  late double tdTotal;
+  late double tqTotal;
+  late double trTotal;
+   // Charger les données de SharedPreferences
+  _loadData() async {
+    prefs = await SharedPreferences.getInstance();
+    setState(() {
+      nofValue = prefs.getString('nofValue') ?? '0';
+      nofSovema1 = prefs.getString('nofSovema1') ?? '0';
+      nofSovema2 = prefs.getString('nofSovema2') ?? '0';
+      QPTotal = prefs.getDouble('QPTotal') ?? 0.0;
+      trsTotal = prefs.getDouble('trsTotal') ?? 0.0;
+      tpTotal = prefs.getDouble('tpTotal') ?? 0.0;
+      tdTotal = prefs.getDouble('tdTotal') ?? 0.0;
+      tqTotal = prefs.getDouble('tqTotal') ?? 0.0;
+      trTotal = prefs.getDouble('trTotal') ?? 0.0;
+    });
+  }
+  // Sauvegarder les données dans SharedPreferences
+  _saveData() async {
+    await prefs.setString('nofValue', nofValue);
+    await prefs.setString('nofSovema1', nofSovema1);
+    await prefs.setString('nofSovema2', nofSovema2);
+    await prefs.setDouble('QPTotal', QPTotal);
+    await prefs.setDouble('trsTotal', trsTotal);
+    await prefs.setDouble('tpTotal', tpTotal);
+    await prefs.setDouble('tdTotal', tdTotal);
+    await prefs.setDouble('tqTotal', tqTotal);
+    await prefs.setDouble('trTotal', trTotal);
+  }
+    @override
+  void initState() {
+    super.initState();
+    _loadData(); // Chargez les données lors de l'initialisation de la page
+
+  }
   
   List<bool> _isListVisible = [false, false, false];
 
@@ -35,22 +80,53 @@ class _HomepageState extends State<Homepage> {
       _isListVisible[index] = !_isListVisible[index];
     });
   }
+Color getShadowColor(String kpi, double value) {
+  if (value == 0.0) {
+    return shadowcolor; // Couleur par défaut si aucune valeur ou valeur égale à 0
+  }
+
+  switch (kpi) {
+    case "TRS":
+      if (value > 90) return green1;
+      if (value > 55 && value < 65) return Colors.yellow;
+      return red1;
+    case "TP":
+    case "TQ":
+    case "TR":
+      if (value > 90) return green1;
+      if (value > 80 && value < 90) return Colors.yellow;
+      return red1;
+    case "TD":
+      if (value > 75) return green1;
+      if (value > 55 && value < 75) return Colors.yellow;
+      return red1;
+    default:
+      return shadowcolor; // Par défaut si KPI inconnu
+  }
+}
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       appBar: CustomAppBar(),
-      body: SingleChildScrollView(
+      drawer:CustomDrawer(),
+      body: 
+      SingleChildScrollView(
         child: Center(
+
           child: Column(
+            
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               SizedBox(height: 20),
               // Assemblage Card
+              
               _buildCard(
                 title: 'Assemblage',
                 subtitle: 'UAP',
                 imagePath: 'assets/images/mach.png',
+                 imagePath2:  'assets/images/alert.png',
                 isListVisible: _isListVisible[0],
                 onToggleVisibility: () => _toggleListVisibility(0),
                  destinationPage: Ligne(),
@@ -61,8 +137,9 @@ class _HomepageState extends State<Homepage> {
               // Maintenance Card
               _buildCard(
                 title: 'Palque',
-                subtitle: '',
-                imagePath: 'assets/images/plaque.jpg',
+                subtitle: 'UAP',
+                imagePath: 'assets/images/plaque.png',
+                imagePath2:  'assets/images/alert.png',
                 isListVisible: _isListVisible[1],
                 onToggleVisibility: () => _toggleListVisibility(1),
                  destinationPage: Ligne(),
@@ -71,9 +148,10 @@ class _HomepageState extends State<Homepage> {
               ),
 
               _buildCard(
-                title: 'Charge-Finition',
-                subtitle: '',
-                imagePath: 'assets/images/p2.jpg',
+                title: 'Finition-Charge',
+                subtitle: 'UAP',
+                imagePath: 'assets/images/p2.png',
+                imagePath2:'assets/images/alert.png',
                 isListVisible: _isListVisible[2],
                 onToggleVisibility: () => _toggleListVisibility(2),
                  destinationPage:Ligne() ,
@@ -86,157 +164,141 @@ class _HomepageState extends State<Homepage> {
       ),
     );
   }
-
- // Modify _buildCard to include isActive
-Widget _buildCard({
-  required String title,
-  required String subtitle,
-  required String imagePath,
-  required Widget destinationPage,
-  required bool isListVisible,
-  required VoidCallback onToggleVisibility,
-  required bool isActive, // New parameter for active/inactive status
-  required Widget content1,
-}) {
-  return Card(
-    elevation: 4,
-    margin: EdgeInsets.all(16),
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(10),
-    ),
-    child: Container(
-      decoration: BoxDecoration(
-        color: isActive ? Colors.white : Colors.grey[300], // Change color when inactive
-        borderRadius: BorderRadius.circular(10),
-        boxShadow: [
-          BoxShadow(
-            color: shadowcolor,
-            spreadRadius: 2,
-            blurRadius: 5,
-            offset: Offset(0, 3),
-          ),
-        ],
-      ),
-      child: Column(
-        children: [
-          Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.vertical(top: Radius.circular(10)),
-              color: isActive ? navbar : Colors.grey[500], // Inactive color for navbar
-              boxShadow: [
-                BoxShadow(
-                  color: shadowcolor,
-                  spreadRadius: 1,
-                  blurRadius: 2,
-                  offset: Offset(0, 5),
-                ),
-              ],
-            ),
-            child: ListTile(
-              title: Text(
-                title,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 30,
-                  color: textcolor,
-                ),
-              ),
-              subtitle: Text(
-                subtitle,
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 20,
-                  color: textcolor,
-                ),
-              ),
-              onTap: isActive
-                  ? () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => destinationPage),
-                      );
-                    }
-                  : null, // Disable navigation when inactive
-            ),
-          ),
-          Image.asset(imagePath),
-          SizedBox(height: 20),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              IconButton(
-                iconSize: 30,
-                onPressed: isActive ? onToggleVisibility : null, // Disable toggle when inactive
-                icon: Icon(
-                  isListVisible
-                      ? Icons.arrow_circle_up_rounded
-                      : Icons.arrow_circle_down_rounded,
-                ),
-              ),
-            ],
-          ),
-         if (isListVisible)content1,
-            
-        ],
-      ),
-    ),
-  );
-}Widget Assemblage() {
+Widget Assemblage() {
   return Column(
     children: [
       fun1("KPI | Performance de l'UAP", 'assets/images/iconKpi.webp'),
       Container(
         constraints: BoxConstraints(maxHeight: 450),
-        child: ListDisplay(
+        child: Listof(
           items: [
-            {"title": "TRS", "subtitle": "Taux de rendement synthétique", "value":"${widget.trsTotal}"},
-            {"title": "TP", "subtitle": "Taux de performance", "value": "${widget.tpTotal}"},
-            {"title": "TD", "subtitle": "Taux de disponibilité", "value": "${widget.tdTotal}"},
-            {"title": "TQ", "subtitle": "Taux de qualité", "value":  "${widget.tqTotal}"},
-            {"title": "TR", "subtitle": "Taux retouch", "value":"${widget.trTotal}"},
+            ListItem(
+              title: "TRS",
+              subtitle: "Taux de rendement synthétique",
+              value: "${widget.trsTotal.toStringAsFixed(0)}%",
+              shadowColor: getShadowColor("TRS", widget.trsTotal),
+            ),
+            ListItem(
+              title: "TP",
+              subtitle: "Taux de performance",
+              value: "${widget.tpTotal.toStringAsFixed(0)}%",
+              shadowColor: getShadowColor("TP", widget.tpTotal) ,
+            ),
+            ListItem(
+              title: "TD",
+              subtitle: "Taux de disponibilité",
+              value: "${widget.tdTotal.toStringAsFixed(0)}%",
+              shadowColor:  getShadowColor("TD", widget.tdTotal),
+            ),
+            ListItem(
+              title: "TQ",
+              subtitle: "Taux de qualité",
+              value: "${widget.tqTotal.toStringAsFixed(0)}%",
+              shadowColor:  getShadowColor("TQ", widget.tqTotal),
+            ),
+            ListItem(
+              title: "TR",
+              subtitle: "Taux retouch",
+              value: "${widget.trTotal.toStringAsFixed(0)}%",
+              shadowColor:  getShadowColor("TR", widget.trTotal),
+            ),
           ],
         ),
       ),
-      SizedBox(height: 10),
+      SizedBox(height: 20),
       fun1('OF | Running OFs', 'assets/images/of.png'),
       Container(
         constraints: BoxConstraints(maxHeight: 400),
-        child: ListDisplay(
+        child: Listof(
           items: [
-            {"title": "TBS", "subtitle": "ligne d'Assemblage TBS", "value": '${widget.nofTbs}'},
-            {"title": "SOVEMA1", "subtitle": "ligne d'Assemblage SOVEMA1", "value": "${widget.nofSovema1}"},
-            {"title": "SOVEMA2", "subtitle": "ligne d'Assemblage SOVEMA2", "value": "${widget.nofSovema1}"},
+            ListItem(
+              title: "TBS",
+              subtitle: "ligne d'Assemblage TBS",
+              value: "${widget.nofValue}",
+              shadowColor: shadowcolor,
+            ),
+            ListItem(
+              title: "SOVEMA1",
+              subtitle: "ligne d'Assemblage SOVEMA1",
+              value: "${widget.nofSovema1}",
+              shadowColor: shadowcolor,
+            ),
+            ListItem(
+              title: "SOVEMA2",
+              subtitle: "ligne d'Assemblage SOVEMA2",
+              value: "${widget.nofSovema2}",
+              shadowColor: shadowcolor,
+            ),
           ],
         ),
       ),
-      SizedBox(height: 10),
+      SizedBox(height: 20),
       fun1('Qté | Détail des quantités produites', 'assets/images/quantity.png'),
       Container(
         constraints: BoxConstraints(maxHeight: 400),
-        child: ListDisplay(
+        child: Listof(
           items: [
-            {"title": "Qté Conf [batterie]", "subtitle": "Quantité totale produites conformes", "value":"${widget.QPTotal}" },
-            {"title": "Qté NC [batterie]", "subtitle": "Quantité totale non conformes", "value": "0"},
-            {"title": "Qté Ret [batterie]", "subtitle": "Quantité totale retouchée", "value": "0"},
+            ListItem(
+              title: "Qté Conf [batterie]",
+              subtitle: "Quantité totale produites conformes",
+              value: "${widget.QPTotal.toStringAsFixed(0)}%",
+              shadowColor: shadowcolor,
+            ),
+            ListItem(
+              title: "Qté NC [batterie]",
+              subtitle: "Quantité totale non conformes",
+              value: "0",
+              shadowColor: shadowcolor,
+            ),
+            ListItem(
+              title: "Qté Ret [batterie]",
+              subtitle: "Quantité totale retouchée",
+              value: "0",
+              shadowColor: shadowcolor,
+            ),
           ],
         ),
       ),
-      SizedBox(height: 10),
+      SizedBox(height: 20),
       fun1('Eng | Performance énergétique', 'assets/images/eng.png'),
       Container(
         constraints: BoxConstraints(maxHeight: 450),
-        child: ListDisplay(
+        child: Listof(
           items: [
-            {"title": "Energie [KWh]", "subtitle": "Total consommation d'énergie active", "value": "0"},
-            {"title": "P [KW]", "subtitle": "Total puissance active", "value": "0"},
-            {"title": "Q [KVAR]", "subtitle": "Total puissance réactive", "value": "0"},
-            {"title": "cos ϕ [ ]", "subtitle": "Facteur de puissance", "value": "0"},
-            {"title": "CO2 [Kg]", "subtitle": "Total Empreinte carbone", "value": "0"},
+            ListItem(
+              title: "Energie [KWh]",
+              subtitle: "Total consommation d'énergie active",
+              value: "0",
+              shadowColor: shadowcolor,
+            ),
+            ListItem(
+              title: "P [KW]",
+              subtitle: "Total puissance active",
+              value: "0",
+              shadowColor: shadowcolor,
+            ),
+            ListItem(
+              title: "Q [KVAR]",
+              subtitle: "Total puissance réactive",
+              value: "0",
+              shadowColor: shadowcolor,
+            ),
+            ListItem(
+              title: "cos ϕ [ ]",
+              subtitle: "Facteur de puissance",
+              value: "0",
+              shadowColor: shadowcolor,
+            ),
+            ListItem(
+              title: "CO2 [Kg]",
+              subtitle: "Total Empreinte carbone",
+              value: "0",
+              shadowColor: shadowcolor,
+            ),
           ],
         ),
       ),
-      SizedBox(height: 10),
+      SizedBox(height: 20),
     ],
   );
 }
@@ -246,6 +308,7 @@ Widget _buildCard({
       margin: EdgeInsets.all(2),
       padding: EdgeInsets.all(20),
       decoration: BoxDecoration(
+        borderRadius: BorderRadius.all(Radius.circular(10)),
         color: Colors.white,
         boxShadow: [
           BoxShadow(
@@ -267,9 +330,128 @@ Widget _buildCard({
               overflow: TextOverflow.ellipsis,
             ),
           ),
-          Image.asset(pathimage, width: 30),
+          Image.asset(pathimage, width: 30,),
         ],
       ),
     );
   }
+ // Modify _buildCard to include isActive
+Widget _buildCard({
+  required String title,
+  required String subtitle,
+  required String imagePath,
+  required String imagePath2,
+  required Widget destinationPage,
+  required bool isListVisible,
+  required VoidCallback onToggleVisibility,
+  required bool isActive, // New parameter for active/inactive status
+  required Widget content1,
+}) {
+  return Card(
+    elevation: 4,
+    margin: EdgeInsets.all(16),
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(30),
+    ),
+    child: Container(
+      decoration: BoxDecoration(
+        color: isActive ? Colors.white : Colors.grey[300], // Change color when inactive
+        borderRadius: BorderRadius.only(
+ topLeft: Radius.circular(30),  // Adjust the radius as needed
+    topRight: Radius.circular(30),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: shadowcolor,
+            spreadRadius: 2,
+            blurRadius: 5,
+            offset: Offset(0, 3),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
+              color: isActive ? navbar : Colors.grey[400], // Inactive color for navbar
+              boxShadow: [
+                BoxShadow(
+                  color: shadowcolor,
+                  spreadRadius: 1,
+                  blurRadius: 2,
+                  offset: Offset(0, 5),
+                ),
+              ],
+            ),
+            child: ListTile(
+              title: Text(
+                title,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 25,
+                  color: textcolor,
+                ),
+              ),
+              subtitle: Text(
+                subtitle,
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 15,
+                  color: textcolor,
+                ),
+              ),
+              onTap: isActive
+                  ? () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => destinationPage),
+                      );
+                    }
+                  : null, // Disable navigation when inactive
+            ),
+          ),
+          Image.asset(imagePath),
+          SizedBox(height: 20),
+          Row(
+            
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              
+              Image.asset(imagePath2,width: 65,),
+
+                IconButton(
+              iconSize: 35,
+              onPressed: onToggleVisibility,
+              icon: Container(
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,  // Forme circulaire de l'icône
+                  boxShadow: [
+                    BoxShadow(
+                      color: const Color.fromARGB(255, 168, 166, 166).withOpacity(0.2),  // Couleur de l'ombre avec opacité
+                      offset: Offset(1, 1),  // Décalage de l'ombre
+                      blurRadius: 2,  // Flou de l'ombre
+                    ),
+                  ],
+                ),
+                child: Icon(
+                  isListVisible
+                      ? Icons.arrow_circle_up
+                      : Icons.arrow_circle_down_rounded,
+                  color: const Color.fromARGB(255, 80, 78, 78),  // Couleur de l'icône
+                ),
+              ),
+            ),
+            ],
+          ),
+          SizedBox(height: 10,),
+         if (isListVisible)content1,
+            
+        ],
+      ),
+    ),
+  );
+}
+
 }

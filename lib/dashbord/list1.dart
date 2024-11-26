@@ -6,7 +6,7 @@ class ListDisplay extends StatelessWidget {
 
   const ListDisplay({super.key, required this.items});
 
-  Widget _buildListItem(String title, String subtitle, String value) {
+  Widget _buildListItem(String title, String subtitle, String value ) {
     return ListTile(
       title: Text(
         title,
@@ -62,6 +62,8 @@ class ListDisplay extends StatelessWidget {
             item['title'] ?? '',
             item['subtitle'] ?? '',
             item['value'] ?? '0',
+        
+
           );
         },
       ),
