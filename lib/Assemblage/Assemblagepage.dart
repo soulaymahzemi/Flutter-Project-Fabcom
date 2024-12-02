@@ -119,6 +119,7 @@ class _LigneState extends State<Ligne> {
 
 
 
+
   void connectSockets()  {
     // Connecting to all Socket.IO instances
     sockets['tbs1'] = IO.io('http://localhost:5003', <String, dynamic>{
@@ -140,7 +141,6 @@ class _LigneState extends State<Ligne> {
 
       setState(() {
         dataTbs1 = jsonData;
-           // Save data to cache
         // Divide cad_env, cad_cos, cad_soud by 1000 and round the values
 
         dataTbs1?['cad_env'] = ((dataTbs1?['cad_env'] as num) / 1000).round();
@@ -150,7 +150,6 @@ class _LigneState extends State<Ligne> {
       });
 
   // Sauvegarder dans le cache
-  await saveDataToCache('tbs1Data', dataTbs1);
 
     });
 
@@ -168,7 +167,6 @@ class _LigneState extends State<Ligne> {
             ((dataSovema1?['cad_soud'] as num) / 1000).round();
         dataSovema1?['cad'] = ((dataSovema1?['cad'] as num) / 1000).round();
       });
-       await saveDataToCache('sovema1Data', dataSovema1);
 
     });
 
@@ -186,7 +184,6 @@ class _LigneState extends State<Ligne> {
             ((dataSovema2?['cad_soud'] as num) / 1000).round();
         dataSovema2?['cad'] = ((dataSovema2?['cad'] as num) / 1000).round();
       });
-  await saveDataToCache('sovema2Data', dataSovema2);
 
     });
  // Handle connection errors
@@ -197,14 +194,14 @@ class _LigneState extends State<Ligne> {
       print('Erreur de connexion à TBS 1: $data');
     });
 
-    sockets['sovema2']?.on('connect_error', (data) {
+    sockets['sovema1']?.on('connect_error', (data) {
       setState(() {
         errorMessage = 'Erreur de connexion à Sovema 1';
       });
       print('Erreur de connexion à Sovema 1: $data');
     });
 
-    sockets['sovema3']?.on('connect_error', (data) {
+    sockets['sovema2']?.on('connect_error', (data) {
       setState(() {
         errorMessage = 'Erreur de connexion à Sovema 2';
       });
@@ -213,7 +210,7 @@ class _LigneState extends State<Ligne> {
   }
 
   
-
+ 
 
   Future<void> fetchMachines() async {
     try {
@@ -301,25 +298,11 @@ class _LigneState extends State<Ligne> {
   }
 
 
-Future<void> _loadCachedData() async {
-  final cachedDataTbs1 = await loadDataFromCache('tbs1Data');
-  final cachedDataSovema1 = await loadDataFromCache('sovema1Data');
-  final cachedDataSovema2 = await loadDataFromCache('sovema2Data');
-
-  setState(() {
-    if (cachedDataTbs1 != null) dataTbs1 = cachedDataTbs1;
-    if (cachedDataSovema1 != null) dataSovema1 = cachedDataSovema1;
-    if (cachedDataSovema2 != null) dataSovema2 = cachedDataSovema2;
-  });
-}
-
-
 @override
 void initState() {
   super.initState();
   fetchMachines();
   connectSockets();
-  _loadCachedData();
 }
 
   @override
