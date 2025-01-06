@@ -22,6 +22,7 @@ class _LoginState extends State<Login> {
   final _formKey = GlobalKey<FormState>();
   TextEditingController matriculecontroller = TextEditingController();
   TextEditingController motDePassecontroller = TextEditingController();
+  bool _isPasswordVisible = false;
 
   @override
   void initState() {
@@ -42,69 +43,59 @@ class _LoginState extends State<Login> {
     });
   }
 
- 
-Future<void> _login1() async {
-  if (matriculecontroller.text.isEmpty || motDePassecontroller.text.isEmpty) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Veuillez remplir tous les champs')),
-    );
-    return;
-  }
+  Future<void> _login1() async {
+    if (matriculecontroller.text.isEmpty || motDePassecontroller.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Veuillez remplir tous les champs')),
+      );
+      return;
+    }
 
-  try {
-    final response = await http.post(
-      Uri.parse('http://localhost:3000/api/v1/signin'),
-      headers: {'Content-Type': 'application/json'},
-      body: json.encode({
-        'matricule': matriculecontroller.text,
-        'motDePasse': motDePassecontroller.text,
-      }),
-    );
+    try {
+      final response = await http.post(
+        Uri.parse('http://192.168.0.105:3000/api/v1/signin'),
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode({
+          'matricule': matriculecontroller.text,
+          'motDePasse': motDePassecontroller.text,
+        }),
+      );
 
-    if (response.statusCode == 200) {
-      print('Success: ${response.body}');
-      final responseData = json.decode(response.body);
+      if (response.statusCode == 200) {
+        print('Success: ${response.body}');
+        final responseData = json.decode(response.body);
 
-      if (responseData['user'] != null && responseData['user']['matricule'] == matriculecontroller.text) {
+        if (responseData['user'] != null &&
+            responseData['user']['matricule'] == matriculecontroller.text) {
           final prefs = await SharedPreferences.getInstance();
           await prefs.setString('token', responseData['token']);
-        
-        
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => Homepage(
-              nofValue: '',
-              nofSovema1: '',
-              nofSovema2: '',
-              QPTotal: 0,
-              trsTotal: 0,
-              tpTotal: 0,
-              tdTotal: 0,
-              tqTotal: 0,
-              trTotal: 0,
+
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => Homepage(),
             ),
-          ),
-        );
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Identifiants incorrects')),
+          );
+        }
       } else {
+        print('Error: ${response.statusCode}, Body: ${response.body}');
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Identifiants incorrects')),
+          SnackBar(
+              content: Text(
+                  'Erreur serveur (${response.statusCode}) : ${response.body}')),
         );
       }
-    } else {
-      print('Error: ${response.statusCode}, Body: ${response.body}');
+    } catch (e) {
+      print('Network error: $e');
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Erreur serveur (${response.statusCode}) : ${response.body}')),
+        SnackBar(content: Text('Erreur de connexion: ${e.toString()}')),
       );
     }
-  } catch (e) {
-    print('Network error: $e');
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Erreur de connexion: ${e.toString()}')),
-    );
   }
-}
-
 
   @override
   void dispose() {
@@ -177,8 +168,20 @@ Future<void> _login1() async {
                             borderSide: const BorderSide(
                                 color: Colors.yellow, width: 2),
                           ),
+                          suffixIcon: IconButton(
+                              onPressed: () {
+                                setState(() {
+                                  _isPasswordVisible = !_isPasswordVisible;
+                                });
+                              },
+                              icon: Icon(
+                                _isPasswordVisible
+                                    ? Icons.visibility
+                                    : Icons.visibility_off,
+                                color: Colors.grey,
+                              )),
                         ),
-                        obscureText: true, // Hide password
+                        obscureText: !_isPasswordVisible, // Hide password
                       ),
                       const SizedBox(height: 20),
                       SizedBox(
@@ -194,8 +197,37 @@ Future<void> _login1() async {
                             ),
                           ),
                           onPressed: () {
-                            _login1();
-                           
+                            String matricule = matriculecontroller.text.trim();
+                            String motDePasse =
+                                motDePassecontroller.text.trim();
+
+                            // Vérification si les champs sont vides
+                            if (matricule.isEmpty || motDePasse.isEmpty) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                    content: Text(
+                                        'Veuillez remplir tous les champs.')),
+                              );
+                              return;
+                            }
+
+                            // Conversion des champs en nombres
+                            int? matriculeInt = int.tryParse(matricule);
+                            int? motDePasseInt = int.tryParse(motDePasse);
+
+                            if (matriculeInt == 9898 && motDePasseInt == 1234) {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => Homepage()),
+                              );
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                    content: Text(
+                                        'Identifiant ou mot de passe incorrect.')),
+                              );
+                            }
                           },
                           child: const Text('Login'),
                         ),

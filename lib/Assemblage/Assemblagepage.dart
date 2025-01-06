@@ -3,13 +3,11 @@ import 'package:arames_project/Assemblage/classe%20.dart';
 import 'package:arames_project/colors/colors.dart';
 import 'package:arames_project/dashbord/homepage.dart';
 import 'package:arames_project/dashbord/men.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import '../dashbord/appbar.dart';
 import 'indicator.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert'; // For decoding JSON
-
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:arames_project/Assemblage/time.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -28,27 +26,39 @@ class _LigneState extends State<Ligne> {
   Map<String, dynamic>? sovema1Data;
   Map<String, dynamic>? sovema2Data;
   Map<String, dynamic>? data;
+
 //webshooket
   Map<String, IO.Socket?> sockets = {};
   Map<String, dynamic>? dataTbs1;
   Map<String, dynamic>? dataSovema1;
   Map<String, dynamic>? dataSovema2;
-// Déclaration des variables d'instance
+  bool etattbs = false;
+  int tpsMrctbs = 0;
+  int tpsArttbs = 0;
 
-  double trsTotal = 0.0;
-  double tpTotal = 0.0;
-  double tdTotal = 0.0;
-  double tqTotal = 0.0;
-  double trTotal = 0.0;
+  bool etatSovema2 = false;
+  int tpsArtSovema2 = 0;
+  int tpsMrcSovema2 = 0;
+  bool etatSovema1 = false;
+  int tpsArtSovema1 = 0;
+  int tpsMrcSovema1 = 0;
+//sovema2socket
+  int dataSovema2cad_env = 0;
+  int dataSovema2cad_cos = 0;
+  int dataSovema2cad_soud = 0;
+  int dataSovema2cad = 0;
+//sovema1
 
-  double QPTotal = 0.0;
-  String nofValue = ""; // Declare it as a class-level variable
-  String nofSovema1 = "";
-  String nofSovema2 = "";
-
+  int dataSovema1cad_env = 0;
+  int dataSovema1cad_cos = 0;
+  int dataSovema1cad_soud = 0;
+  int dataSovema1cad = 0;
+  //tbs
+  int dataTbs1cad_env = 0;
+  int dataTbs1cad_cos = 0;
+  int dataTbs1cad_soud = 0;
+  int dataTbs1cad = 0;
   String? errorMessage;
-  int tpsArt = 0;
-  int tpsMrc = 0;
 
 // Variables pour stocker les données reçues par WebSocket
 
@@ -117,10 +127,13 @@ class _LigneState extends State<Ligne> {
     return null;
   }
 
+// Save the WebSocket data to SharedPreferences
+  Future<void> saveDataToCache4(String key, Map<String, dynamic> data) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(key, json.encode(data)); // Save data as JSON string
+  }
 
-
-
-  void connectSockets()  {
+  void connectSockets() {
     // Connecting to all Socket.IO instances
     sockets['tbs1'] = IO.io('http://localhost:5003', <String, dynamic>{
       'transports': ['websocket'],
@@ -137,80 +150,142 @@ class _LigneState extends State<Ligne> {
 
     // Listening for data updates from each socket
     sockets['tbs1']?.on('kpiData', (jsonData) async {
-      print('tbs 1 Données reçues: $jsonData');
+      print('tbs 1 Données reçues socket form socket : $jsonData');
 
       setState(() {
         dataTbs1 = jsonData;
         // Divide cad_env, cad_cos, cad_soud by 1000 and round the values
-
-        dataTbs1?['cad_env'] = ((dataTbs1?['cad_env'] as num) / 1000).round();
-        dataTbs1?['cad_cos'] = ((dataTbs1?['cad_cos'] as num) / 1000).round();
-        dataTbs1?['cad_soud'] = ((dataTbs1?['cad_soud'] as num) / 1000).round();
-        dataTbs1?['cad'] = ((dataTbs1?['cad'] as num) / 1000).round();
+        dataTbs1cad_env = ((dataTbs1?['cad_env'] as num) / 1000).round();
+        dataTbs1cad_cos = ((dataTbs1?['cad_cos'] as num) / 1000).round();
+        dataTbs1cad_soud = ((dataTbs1?['cad_soud'] as num) / 1000).round();
+        dataTbs1cad = ((dataTbs1?['cad'] as num) / 1000).round();
+        etattbs = dataTbs1?['etat'] ?? false;
+        tpsArttbs = dataTbs1?['tps_art'] ?? 0;
+        tpsMrctbs = dataTbs1?['tps_mrc'] ?? 0;
       });
-
-  // Sauvegarder dans le cache
-
+      await saveDataToCache4('tbs1_data', dataTbs1!);
     });
 
     sockets['sovema1']?.on('kpiData', (jsonData) async {
-      print('sovema1 Données reçues: $jsonData');
+      print('sovema1 Données reçues forme socket: $jsonData');
 
       setState(() {
         dataSovema1 = jsonData;
         // Divide cad_env, cad_cos, cad_soud by 1000 and round the values
-        dataSovema1?['cad_env'] =
-            ((dataSovema1?['cad_env'] as num) / 1000).round();
-        dataSovema1?['cad_cos'] =
-            ((dataSovema1?['cad_cos'] as num) / 1000).round();
-        dataSovema1?['cad_soud'] =
+        dataSovema1cad_env = ((dataSovema1?['cad_env'] as num) / 1000).round();
+        dataSovema1cad_cos = ((dataSovema1?['cad_cos'] as num) / 1000).round();
+        dataSovema1cad_soud =
             ((dataSovema1?['cad_soud'] as num) / 1000).round();
-        dataSovema1?['cad'] = ((dataSovema1?['cad'] as num) / 1000).round();
+        dataSovema1cad = ((dataSovema1?['cad'] as num) / 1000).round();
+        etatSovema1 = dataSovema1?['etat'] ?? false;
+        tpsArtSovema1 = dataSovema1?['tps_art'] ?? 0;
+        tpsMrcSovema1 = dataSovema1?['tps_mrc'] ?? 0;
       });
-
+      await saveDataToCache4('sovema1_data', dataSovema1!);
     });
 
     sockets['sovema2']?.on('kpiData', (jsonData) async {
-      print(' sovema2 Données reçues: $jsonData');
+      print(' sovema2 Données reçues form socket: $jsonData');
 
       setState(() {
         dataSovema2 = jsonData;
         // Divide cad_env, cad_cos, cad_soud by 1000 and round the values
-        dataSovema2?['cad_env'] =
-            ((dataSovema2?['cad_env'] as num) / 1000).round();
-        dataSovema2?['cad_cos'] =
-            ((dataSovema2?['cad_cos'] as num) / 1000).round();
-        dataSovema2?['cad_soud'] =
+        dataSovema2cad_env = ((dataSovema2?['cad_env'] as num) / 1000).round();
+        dataSovema2cad_cos = ((dataSovema2?['cad_cos'] as num) / 1000).round();
+        dataSovema2cad_soud =
             ((dataSovema2?['cad_soud'] as num) / 1000).round();
-        dataSovema2?['cad'] = ((dataSovema2?['cad'] as num) / 1000).round();
+        dataSovema2cad = ((dataSovema2?['cad'] as num) / 1000).round();
+        etatSovema2 = dataSovema2?['etat'] ?? false;
+        tpsArtSovema2 = dataSovema2?['tps_art'] ?? 0;
+        tpsMrcSovema2 = dataSovema2?['tps_mrc'] ?? 0;
       });
-
+      await saveDataToCache4('sovema2_data', dataSovema2!);
     });
- // Handle connection errors
+    // Handle connection errors
     sockets['tbs1']?.on('connect_error', (data) {
       setState(() {
-        errorMessage = 'Erreur de connexion à TBS 1';
+        errorMessage = 'Erreur de connexion à TBS 1 socket';
       });
       print('Erreur de connexion à TBS 1: $data');
     });
 
     sockets['sovema1']?.on('connect_error', (data) {
       setState(() {
-        errorMessage = 'Erreur de connexion à Sovema 1';
+        errorMessage = 'Erreur de connexion à Sovema 1 socket';
       });
       print('Erreur de connexion à Sovema 1: $data');
     });
 
     sockets['sovema2']?.on('connect_error', (data) {
       setState(() {
-        errorMessage = 'Erreur de connexion à Sovema 2';
+        errorMessage = 'Erreur de connexion à Sovema 2 socket';
       });
       print('Erreur de connexion à Sovema 2: $data');
     });
   }
 
-  
- 
+  // Load the WebSocket data from SharedPreferences
+  Future<Map<String, dynamic>?> loadDataFromCache4(String key) async {
+    final prefs = await SharedPreferences.getInstance();
+    final jsonString = prefs.getString(key);
+    if (jsonString != null) {
+      return Map<String, dynamic>.from(json.decode(jsonString));
+    }
+    return null; // Return null if no data found
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    fetchMachines();
+    connectSockets();
+
+    // Load saved data from cache when the widget is initialized
+    loadDataFromCache4('tbs1_data').then((data) {
+      if (data != null) {
+        setState(() {
+          dataTbs1 = data;
+          dataTbs1cad_env = ((data['cad_env'] as num) / 1000).round();
+          dataTbs1cad_cos = ((data['cad_cos'] as num) / 1000).round();
+          dataTbs1cad_soud = ((data['cad_soud'] as num) / 1000).round();
+          dataTbs1cad = ((data['cad'] as num) / 1000).round();
+          etattbs = data['etat'] ?? false;
+          tpsArttbs = data['tps_art'] ?? 0;
+          tpsMrctbs = data['tps_mrc'] ?? 0;
+        });
+      }
+    });
+
+    loadDataFromCache4('sovema1_data').then((data) {
+      if (data != null) {
+        setState(() {
+          dataSovema1 = data;
+          dataSovema1cad_env = ((data['cad_env'] as num) / 1000).round();
+          dataSovema1cad_cos = ((data['cad_cos'] as num) / 1000).round();
+          dataSovema1cad_soud = ((data['cad_soud'] as num) / 1000).round();
+          dataSovema1cad = ((data['cad'] as num) / 1000).round();
+          etatSovema1 = data['etat'] ?? false;
+          tpsArtSovema1 = data['tps_art'] ?? 0;
+          tpsMrcSovema1 = data['tps_mrc'] ?? 0;
+        });
+      }
+    });
+
+    loadDataFromCache4('sovema2_data').then((data) {
+      if (data != null) {
+        setState(() {
+          dataSovema2 = data;
+          dataSovema2cad_env = ((data['cad_env'] as num) / 1000).round();
+          dataSovema2cad_cos = ((data['cad_cos'] as num) / 1000).round();
+          dataSovema2cad_soud = ((data['cad_soud'] as num) / 1000).round();
+          dataSovema2cad = ((data['cad'] as num) / 1000).round();
+          etatSovema2 = data['etat'] ?? false;
+          tpsArtSovema2 = data['tps_art'] ?? 0;
+          tpsMrcSovema2 = data['tps_mrc'] ?? 0;
+        });
+      }
+    });
+  }
 
   Future<void> fetchMachines() async {
     try {
@@ -221,7 +296,7 @@ class _LigneState extends State<Ligne> {
 
       // Fetch TBS data
       final responseTBS =
-          await http.get(Uri.parse('http://localhost:3001/api/v1/machine/tbs'));
+          await http.get(Uri.parse('http://localhost:3001/api/v1/machine'));
       if (responseTBS.statusCode == 200) {
         data = json.decode(responseTBS.body);
         await saveDataToCache('tbsData', data); // Enregistrer dans le cache
@@ -229,8 +304,8 @@ class _LigneState extends State<Ligne> {
       }
 
       // Fetch Sovema1 data
-      final responseSovema1 = await http
-          .get(Uri.parse('http://localhost:3002/api/v1/machine/sovema1'));
+      final responseSovema1 =
+          await http.get(Uri.parse('http://localhost:3002/api/v1/machine'));
       if (responseSovema1.statusCode == 200) {
         sovema1Data = json.decode(responseSovema1.body);
         await saveDataToCache(
@@ -239,8 +314,8 @@ class _LigneState extends State<Ligne> {
       }
 
       // Fetch Sovema2 data
-      final responseSovema2 = await http
-          .get(Uri.parse('http://localhost:3003/api/v1/machine/sovema2'));
+      final responseSovema2 =
+          await http.get(Uri.parse('http://localhost:3003/api/v1/machine'));
       if (responseSovema2.statusCode == 200) {
         sovema2Data = json.decode(responseSovema2.body);
         await saveDataToCache(
@@ -252,43 +327,6 @@ class _LigneState extends State<Ligne> {
         calculatePercentage(data);
         calculatePercentagesovema1(sovema1Data);
         calculatePercentagesovema2(sovema2Data);
-
-        trsTotal = ((data?['KPIs']['TRS'] ?? 0) +
-                (sovema1Data?['KPIs']['TRS'] ?? 0) +
-                (sovema2Data?['KPIs']['TRS'] ?? 0)) /
-            3;
-        tpTotal = ((data?['KPIs']['TP'] ?? 0) +
-                (sovema1Data?['KPIs']['TP'] ?? 0) +
-                (sovema2Data?['KPIs']['TP'] ?? 0)) /
-            3;
-        tdTotal = ((data?['KPIs']['TD'] ?? 0) +
-                (sovema1Data?['KPIs']['TD'] ?? 0) +
-                (sovema2Data?['KPIs']['TD'] ?? 0)) /
-            3;
-        tqTotal = ((data?['KPIs']['TQ'] ?? 0) +
-                (sovema1Data?['KPIs']['TQ'] ?? 0) +
-                (sovema2Data?['KPIs']['TQ'] ?? 0)) /
-            3;
-        trTotal = ((data?['KPIs']['TR'] ?? 0) +
-                (sovema1Data?['KPIs']['TR'] ?? 0) +
-                (sovema2Data?['KPIs']['TR'] ?? 0)) /
-            3;
-        QPTotal = ((data?['OF']?['QP'] ?? 0) +
-                (sovema1Data?['OF']?['QP'] ?? 0) +
-                (sovema2Data?['OF']?['QP'] ?? 0)) /
-            3;
-        nofValue = data?['OF']?['NOF'] ?? 0;
-        print('NOF Value: $nofValue');
-        nofSovema1 = sovema1Data?['OF']['NOF'] ?? 0;
-        print('NOF Valuesovema 1: $nofSovema1');
-        nofSovema2 = sovema2Data?['OF']['NOF'] ?? 0;
-        print('NOF Value sovema2: $nofSovema2');
-        print('valeur de qtotlae: $QPTotal');
-        print('valeur de td: $tdTotal');
-        print('valeur de tp: $tpTotal');
-        print('valeur de tq: $tqTotal');
-        print('valeur de tr: $trTotal');
-        print('valeur de trs: $trsTotal');
       });
     } catch (e) {
       setState(() {
@@ -296,14 +334,6 @@ class _LigneState extends State<Ligne> {
       });
     }
   }
-
-
-@override
-void initState() {
-  super.initState();
-  fetchMachines();
-  connectSockets();
-}
 
   @override
   void dispose() {
@@ -313,44 +343,39 @@ void initState() {
     super.dispose();
   }
 
-Color getShadowColor(String kpi, double value) {
-  if (value == 0.0) {
-    return shadowcolor; // Si aucune valeur ou valeur égale à 0
+  Color getShadowColor(String kpi, double value) {
+    if (value == 0.0) {
+      return shadowcolor; // Si aucune valeur ou valeur égale à 0
+    }
+
+    if (kpi == "TRS") {
+      if (value > 90) {
+        return green1; // Vert si TRS > 90
+      } else if (value > 55 && value < 65) {
+        return Colors.yellow; // Jaune si 55 < TRS < 65
+      } else {
+        return red1; // Rouge si TRS < 55
+      }
+    } else if (kpi == "TP" || kpi == "TQ" || kpi == "TR") {
+      if (value > 90) {
+        return green1; // Vert si TP ou TQ > 90
+      } else if (value > 80 && value < 90) {
+        return Colors.yellow; // Jaune si 80 < TP/TQ < 90
+      } else {
+        return red1; // Rouge si TP/TQ < 80
+      }
+    } else if (kpi == "TD") {
+      if (value > 75) {
+        return green1; // Vert si TD > 75
+      } else if (value > 55 && value < 75) {
+        return Colors.yellow; // Jaune si 55 < TD <= 75
+      } else {
+        return red1; // Rouge si TD < 55
+      }
+    }
+
+    return Colors.white; // Valeur par défaut si aucun KPI
   }
-
-  if (kpi == "TRS") {
-    if (value > 90) {
-      return green1;  // Vert si TRS > 90
-    } else if (value > 55 && value < 65) {
-      return Colors.yellow; // Jaune si 55 < TRS < 65
-    } else {
-      return red1;    // Rouge si TRS < 55
-    }
-  } else if (kpi == "TP" || kpi == "TQ" || kpi =="TR") {
-    if (value > 90) {
-      return green1;  // Vert si TP ou TQ > 90
-    } else if (value > 80 && value < 90) {
-      return Colors.yellow; // Jaune si 80 < TP/TQ < 90
-    } else {
-      return red1;    // Rouge si TP/TQ < 80
-    }
-  } else if (kpi == "TD" ) {
-    if (value > 75) {
-      return green1;    // Vert si TD > 75
-    } else if (value > 55 && value < 75) {
-      return Colors.yellow; // Jaune si 55 < TD <= 75
-    } else {
-      return red1;    // Rouge si TD < 55
-    }
-  }
-  
-  return Colors.white;       // Valeur par défaut si aucun KPI
-}
-
-
-
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -368,17 +393,7 @@ Color getShadowColor(String kpi, double value) {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => Homepage(
-                          nofValue: nofValue,
-                          nofSovema1: nofSovema1,
-                          nofSovema2: nofSovema2,
-                          QPTotal: QPTotal,
-                          trsTotal: trsTotal,
-                          tpTotal: tpTotal,
-                          tdTotal: tdTotal,
-                          tqTotal: tqTotal,
-                          trTotal: trTotal,
-                        ),
+                        builder: (context) => Homepage(),
                       ),
                     );
                   },
@@ -399,8 +414,8 @@ Color getShadowColor(String kpi, double value) {
                     title: 'TBS',
                     subtitle: 'Ligne',
                     TimePage1: TimePage(
-                      tpsArt: dataTbs1?['tps_art'] ?? 0,
-                      tpsMrc: dataTbs1?['tps_mrc'] ?? 0,
+                      tpsArt: tpsArttbs,
+                      tpsMrc: tpsMrctbs,
                     ),
                     imagePath: 'assets/images/mach.png',
                     showTimePage: _showTimePage[0],
@@ -408,16 +423,16 @@ Color getShadowColor(String kpi, double value) {
                     onToggleVisibility: () => _toggleListVisibility(0),
                     contentwidget:
                         TBScontent(presentage: calculatePercentage(data)),
-                    containerColor: dataTbs1?['etat'] == true
+                    containerColor: etattbs == true
                         ? green1
                         : red1, // Color change based on etat
                   ),
-                   _ListCard(
+                  _ListCard(
                     title: 'SOVEMA1',
                     subtitle: 'Ligne',
                     TimePage1: TimePage(
-                      tpsArt: dataSovema1?['tps_art'] ?? 0,
-                      tpsMrc: dataSovema1?['tps_mrc'] ?? 0,
+                      tpsArt: tpsArtSovema1,
+                      tpsMrc: tpsMrcSovema1,
                     ),
                     imagePath: 'assets/images/mach.png',
                     isListVisible: _isListVisible1[1],
@@ -425,25 +440,24 @@ Color getShadowColor(String kpi, double value) {
                     contentwidget: Sovema1content(
                         presentage: calculatePercentage(sovema1Data)),
                     showTimePage: _showTimePage[1],
-                    containerColor: dataSovema1?['etat'] == true
+                    containerColor: etatSovema1 == true
                         ? green1
                         : red1, // Color change based on etat
                   ),
-                  _ListCard
-                  (
+                  _ListCard(
                     title: 'SOVEMA2',
                     TimePage1: TimePage(
-                      tpsArt: dataSovema2?['tps_art'] ?? 0,
-                      tpsMrc: dataSovema2?['tps_mrc'] ?? 0,
+                      tpsArt: tpsArtSovema2,
+                      tpsMrc: tpsMrcSovema2,
                     ),
                     subtitle: 'Ligne',
                     imagePath: 'assets/images/mach.png',
                     isListVisible: _isListVisible1[2],
                     onToggleVisibility: () => _toggleListVisibility(2),
-                   contentwidget: Sovema2content(
-                       presentage: calculatePercentage(sovema2Data)),
+                    contentwidget: Sovema2content(
+                        presentage: calculatePercentage(sovema2Data)),
                     showTimePage: _showTimePage[2],
-                    containerColor: dataSovema2?['etat'] == true
+                    containerColor: etatSovema2 == true
                         ? green1
                         : red1, // Color change based on etat
                   ),
@@ -468,26 +482,22 @@ Color getShadowColor(String kpi, double value) {
                 subtitle: "Numéro de l’ordre de fabrication",
                 value: '${data?['OF']['NOF'] ?? "0"}',
                 shadowColor: shadowcolor,
-                
               ),
               ListItem(
-                title: "Réf Art",
-                subtitle: "Référence de l’article à réaliser",
-                value: '${data?['OF']['Article'] ?? "0"}',
-                shadowColor: shadowcolor
-              ),
+                  title: "Réf Art",
+                  subtitle: "Référence de l’article à réaliser",
+                  value: '${data?['OF']['Article'] ?? "0"}',
+                  shadowColor: shadowcolor),
               ListItem(
-                title: "Qté Obj",
-                subtitle: "Quantité objectif à réaliser",
-                value: '${data?['OF']['QO'] ?? "0"}',
-                shadowColor: shadowcolor
-              ),
+                  title: "Qté Obj",
+                  subtitle: "Quantité objectif à réaliser",
+                  value: '${data?['OF']['QO'] ?? "0"}',
+                  shadowColor: shadowcolor),
               ListItem(
-                title: "Production",
-                subtitle: "Quantité réalisée jusqu’à l’instant",
-                value: '${data?['OF']['QP'] ?? "0"}',
-                shadowColor: shadowcolor
-              ),
+                  title: "Production",
+                  subtitle: "Quantité réalisée jusqu’à l’instant",
+                  value: '${data?['OF']['QP'] ?? "0"}',
+                  shadowColor: shadowcolor),
             ],
           ),
         ),
@@ -504,35 +514,30 @@ Color getShadowColor(String kpi, double value) {
                 subtitle: "Taux de rendement synthétique",
                 value: '${(data?['KPIs']['TRS'] ?? 0.0).toStringAsFixed(0)}%',
                 shadowColor: getShadowColor("TRS", data?['KPIs']['TRS'] ?? 0.0),
-
               ),
               ListItem(
                 title: "TP",
                 subtitle: "Taux de performance",
                 value: '${(data?['KPIs']['TP'] ?? 0.0).toStringAsFixed(0)}%',
                 shadowColor: getShadowColor("TP", data?['KPIs']['TP'] ?? 0.0),
-
               ),
               ListItem(
                 title: "TD",
                 subtitle: "Taux de disponibilité",
                 value: '${(data?['KPIs']['TD'] ?? 0.0).toStringAsFixed(0)}%',
-               shadowColor: getShadowColor("TD", data?['KPIs']['TD'] ?? 0.0),
-
+                shadowColor: getShadowColor("TD", data?['KPIs']['TD'] ?? 0.0),
               ),
               ListItem(
                 title: "TQ",
                 subtitle: "Taux de qualité",
                 value: '${(data?['KPIs']['TQ'] ?? 0.0).toStringAsFixed(0)}%',
-                  shadowColor: getShadowColor("TQ", data?['KPIs']['TQ'] ?? 0.0),
-
+                shadowColor: getShadowColor("TQ", data?['KPIs']['TQ'] ?? 0.0),
               ),
               ListItem(
                 title: "TR",
                 subtitle: "Taux retouche",
                 value: '${(data?['KPIs']['TR'] ?? 0.0).toStringAsFixed(0)}%',
-                              shadowColor: getShadowColor("TR", data?['KPIs']['TR'] ?? 0.0),
-
+                shadowColor: getShadowColor("TR", data?['KPIs']['TR'] ?? 0.0),
               ),
             ],
           ),
@@ -545,33 +550,35 @@ Color getShadowColor(String kpi, double value) {
             ListItem(
                 title: "TC Env [sec]",
                 subtitle: "Cadence réelle de la phase enveloppeuse",
-                value: ' ${dataTbs1?['cad_env'] ?? '0'}'
-                ,shadowColor: shadowcolor
-                ),
-                
+                value: ' ${dataTbs1cad_env}',
+                shadowColor: shadowcolor),
             ListItem(
                 title: "TC COS [sec]",
                 subtitle: "Temps de cycle réel de la phase COS",
-                value: '${dataTbs1?['cad_cos'] ?? '0'}'
-                ,shadowColor: shadowcolor),
+                value: '${dataTbs1cad_cos}',
+                shadowColor: shadowcolor),
             ListItem(
                 title: "TC SC [sec]",
                 subtitle: "Temps de cycle réel soudure des connexions",
-                value: '${dataTbs1?['cad_soud'] ?? '0'}'
-                ,shadowColor: shadowcolor),
+                value: '${dataTbs1cad_soud}',
+                shadowColor: shadowcolor),
             ListItem(
                 title: "TC BC [sec]",
                 subtitle: "Temps de cycle réel soudure Bac/couvercle",
-                value: '${dataTbs1?['cad'] ?? '0'}'
-                ,shadowColor: shadowcolor),
+                value: '${dataTbs1cad}',
+                shadowColor: shadowcolor),
             ListItem(
                 title: "TC th [sec]",
                 subtitle: "Temps de cycle théorique de la ligne",
-                value: '30%',shadowColor: shadowcolor),
+                value: '30',
+                shadowColor: shadowcolor),
           ]),
         ),
-        SizedBox( height: 10, ),
-          Container(
+        SizedBox(
+          height: 10,
+        ),
+
+        /*  Container(
          constraints: BoxConstraints(maxHeight: 480),
         child: Listof(items: [
           ListItem(title: 'Arrêt [sec]', subtitle:'Dernier arrêt enregistré par cause' ,
@@ -580,9 +587,10 @@ Color getShadowColor(String kpi, double value) {
            value: '${data?['historique'][0]['Qté NC']?.toString() ?? "0"}',shadowColor: shadowcolor ),
         ]),
 
+        ),*/
+        SizedBox(
+          height: 10,
         ),
-      SizedBox(height: 10,),
-    
       ],
     );
   }
@@ -591,7 +599,7 @@ Color getShadowColor(String kpi, double value) {
   Widget Sovema1content({required double presentage}) {
     return Column(
       children: [
-        fun2('OF | Progression d\'OF', 'assets/images/of.png'),
+        fun2('OF | Progression d\'OF |Batterie ', 'assets/images/of.png'),
         IndicateurPage(
           percentage: calculatePercentage(sovema1Data),
         ),
@@ -625,6 +633,40 @@ Color getShadowColor(String kpi, double value) {
         SizedBox(
           height: 10,
         ),
+        fun2('OF | Progression d\'OF |Élément ', 'assets/images/of.png'),
+        IndicateurPage(
+          percentage: calculatePercentage(sovema1Data),
+        ),
+        Container(
+          constraints: BoxConstraints(maxHeight: 450),
+          child: Listof(
+            items: [
+              ListItem(
+                  title: "N°OF",
+                  subtitle: "Numéro de l’ordre de fabrication",
+                  value: '${sovema1Data?['OF_elem']['NOF'] ?? "0"}',
+                  shadowColor: shadowcolor),
+              ListItem(
+                  title: "Réf Art",
+                  subtitle: "Référence de l’article à réaliser",
+                  value: '${sovema1Data?['OF_elem']['Article'] ?? "0"}',
+                  shadowColor: shadowcolor),
+              ListItem(
+                  title: "Qté Obj",
+                  subtitle: "Quantité objectif à réaliser",
+                  value: '${sovema1Data?['OF_elem']['QO'] ?? "0"}',
+                  shadowColor: shadowcolor),
+              ListItem(
+                  title: "Production",
+                  subtitle: "Quantité réalisée jusqu’à l’instant",
+                  value: '${sovema1Data?['OF_elem']['QP'] ?? "0"}',
+                  shadowColor: shadowcolor),
+            ],
+          ),
+        ),
+        SizedBox(
+          height: 10,
+        ),
         fun2('KPI | Performance De la Machine ', 'assets/images/iconKpi.webp'),
         Container(
           constraints: BoxConstraints(maxHeight: 450),
@@ -634,36 +676,37 @@ Color getShadowColor(String kpi, double value) {
                 subtitle: "Taux de rendement synthétique",
                 value:
                     '${(sovema1Data?['KPIs']['TRS'] ?? 0.0).toStringAsFixed(0)}%',
-                    shadowColor: getShadowColor("TRS", sovema1Data?['KPIs']['TRS'] ?? 0.0)
-                    
-                    ),
+                shadowColor:
+                    getShadowColor("TRS", sovema1Data?['KPIs']['TRS'] ?? 0.0)),
             ListItem(
-                title: "TP",
-                subtitle: "Taux de performance",
-                value:
-                    '${(sovema1Data?['KPIs']['TP'] ?? 0.0).toStringAsFixed(0)}%',
-                    shadowColor: getShadowColor("TP", sovema1Data?['KPIs']['TP'] ?? 0.0),
-                    
-                    ),
+              title: "TP",
+              subtitle: "Taux de performance",
+              value:
+                  '${(sovema1Data?['KPIs']['TP'] ?? 0.0).toStringAsFixed(0)}%',
+              shadowColor:
+                  getShadowColor("TP", sovema1Data?['KPIs']['TP'] ?? 0.0),
+            ),
             ListItem(
                 title: "TD",
                 subtitle: "Taux de disponibilité",
                 value:
                     '${(sovema1Data?['KPIs']['TD'] ?? 0.0).toStringAsFixed(0)}%',
-                    shadowColor: getShadowColor("TD", sovema1Data?['KPIs']['TD'] ?? 0.0)
-                    ),
+                shadowColor:
+                    getShadowColor("TD", sovema1Data?['KPIs']['TD'] ?? 0.0)),
             ListItem(
                 title: "TQ",
                 subtitle: "Taux de qualité",
                 value:
                     '${(sovema1Data?['KPIs']['TQ'] ?? 0.0).toStringAsFixed(0)}%',
-                    shadowColor: getShadowColor("TQ", sovema1Data?['KPIs']['TQ'] ?? 0.0)),
+                shadowColor:
+                    getShadowColor("TQ", sovema1Data?['KPIs']['TQ'] ?? 0.0)),
             ListItem(
                 title: "TR",
                 subtitle: "Taux retouche",
                 value:
                     '${(sovema1Data?['KPIs']['TR'] ?? 0.0).toStringAsFixed(0)}%',
-                    shadowColor: getShadowColor("TR", sovema1Data?['KPIs']['TR'] ?? 0.0)),
+                shadowColor:
+                    getShadowColor("TR", sovema1Data?['KPIs']['TR'] ?? 0.0)),
           ]),
         ),
         SizedBox(
@@ -676,30 +719,34 @@ Color getShadowColor(String kpi, double value) {
             ListItem(
                 title: "TC Env [sec]",
                 subtitle: "Cadence réelle de la phase enveloppeuse",
-                value: '${dataSovema1?['cad_env'] ?? '0'}',
+                value: '${dataSovema1cad_env}',
                 shadowColor: shadowcolor),
             ListItem(
                 title: "TC COS [sec]",
                 subtitle: "Temps de cycle réel de la phase COS",
-                value: '${dataSovema1?['cad_cos'] ?? '0'}',
+                value: '${dataSovema1cad_cos}',
                 shadowColor: shadowcolor),
             ListItem(
                 title: "TC SC [sec]",
                 subtitle: "Temps de cycle réel soudure des connexions",
-                value: '${dataSovema1?['cad_soud'] ?? '0'}',shadowColor: shadowcolor),
+                value: '${dataSovema1cad_soud}',
+                shadowColor: shadowcolor),
             ListItem(
                 title: "TC BC [sec]",
                 subtitle: "Temps de cycle réel soudure Bac/couvercle",
-                value: '${dataSovema1?['cad'] ?? '0'}',shadowColor: shadowcolor),
+                value: '${dataSovema1cad}',
+                shadowColor: shadowcolor),
             ListItem(
                 title: "TC th [sec]",
                 subtitle: "Temps de cycle théorique de la ligne",
-                value: "30%",
+                value: "30",
                 shadowColor: shadowcolor),
           ]),
         ),
-        SizedBox( height: 20, ),
-        fun2('Alerte| flash incidents ', 'assets/images/news.png'),
+        SizedBox(
+          height: 20,
+        ),
+        /*  fun2('Alerte| flash incidents ', 'assets/images/news.png'),
         Container(
          constraints: BoxConstraints(maxHeight: 480),
         child: Listof(items: [
@@ -709,9 +756,10 @@ Color getShadowColor(String kpi, double value) {
             value:'${sovema1Data?['historique'][0]['Qté NC']?.toString() ?? "0"}',shadowColor: shadowcolor)
         ]),
 
+        ),*/
+        SizedBox(
+          height: 10,
         ),
-      SizedBox(height: 10,),
-
       ],
     );
   }
@@ -720,7 +768,7 @@ Color getShadowColor(String kpi, double value) {
   Widget Sovema2content({required double presentage}) {
     return Column(
       children: [
-        fun2('OF | Progression d\'OF', 'assets/images/of.png'),
+        fun2('OF | Progression d\'OF|Batterie', 'assets/images/of.png'),
         IndicateurPage(
           percentage: calculatePercentage(sovema2Data),
         ),
@@ -754,6 +802,40 @@ Color getShadowColor(String kpi, double value) {
         SizedBox(
           height: 10,
         ),
+        fun2('OF | Progression d\'OF |Élément  ', 'assets/images/of.png'),
+        IndicateurPage(
+          percentage: calculatePercentage(sovema1Data),
+        ),
+        Container(
+          constraints: BoxConstraints(maxHeight: 450),
+          child: Listof(
+            items: [
+              ListItem(
+                  title: "N°OF",
+                  subtitle: "Numéro de l’ordre de fabrication",
+                  value: '${sovema2Data?['OF_elem']['NOF'] ?? "0"}',
+                  shadowColor: shadowcolor),
+              ListItem(
+                  title: "Réf Art",
+                  subtitle: "Référence de l’article à réaliser",
+                  value: '${sovema2Data?['OF_elem']['Article'] ?? "0"}',
+                  shadowColor: shadowcolor),
+              ListItem(
+                  title: "Qté Obj",
+                  subtitle: "Quantité objectif à réaliser",
+                  value: '${sovema2Data?['OF_elem']['QO'] ?? "0"}',
+                  shadowColor: shadowcolor),
+              ListItem(
+                  title: "Production",
+                  subtitle: "Quantité réalisée jusqu’à l’instant",
+                  value: '${sovema2Data?['OF_elem']['QP'] ?? "0"}',
+                  shadowColor: shadowcolor),
+            ],
+          ),
+        ),
+        SizedBox(
+          height: 10,
+        ),
         fun2('KPI | Performance De la Machine ', 'assets/images/iconKpi.webp'),
         Container(
           constraints: BoxConstraints(maxHeight: 450),
@@ -763,31 +845,36 @@ Color getShadowColor(String kpi, double value) {
                 subtitle: "Taux de rendement synthétique",
                 value:
                     '${(sovema2Data?['KPIs']['TRS'] ?? 0.0).toStringAsFixed(0)}%',
-                    shadowColor: getShadowColor("TRS", sovema2Data?['KPIs']['TRS'] ?? 0.0)),
+                shadowColor:
+                    getShadowColor("TRS", sovema2Data?['KPIs']['TRS'] ?? 0.0)),
             ListItem(
                 title: "TP",
                 subtitle: "Taux de performance",
                 value:
                     '${(sovema2Data?['KPIs']['TP'] ?? 0.0).toStringAsFixed(0)}%',
-                    shadowColor: getShadowColor("TP", sovema2Data?['KPIs']['TP'] ?? 0.0)),
+                shadowColor:
+                    getShadowColor("TP", sovema2Data?['KPIs']['TP'] ?? 0.0)),
             ListItem(
                 title: "TD",
                 subtitle: "Taux de disponibilité",
                 value:
                     '${(sovema2Data?['KPIs']['TD'] ?? 0.0).toStringAsFixed(0)}%',
-                    shadowColor: getShadowColor("TD", sovema2Data?['KPIs']['TD'] ?? 0.0)),
+                shadowColor:
+                    getShadowColor("TD", sovema2Data?['KPIs']['TD'] ?? 0.0)),
             ListItem(
                 title: "TQ",
                 subtitle: "Taux de qualité",
                 value:
                     '${(sovema2Data?['KPIs']['TQ'] ?? 0.0).toStringAsFixed(0)}%',
-                    shadowColor: getShadowColor("TQ", sovema2Data?['KPIs']['TQ'] ?? 0.0)),
+                shadowColor:
+                    getShadowColor("TQ", sovema2Data?['KPIs']['TQ'] ?? 0.0)),
             ListItem(
                 title: "TR",
                 subtitle: "Taux retouche",
                 value:
                     '${(sovema2Data?['KPIs']['TR'] ?? 0.0).toStringAsFixed(0)}%',
-                    shadowColor: getShadowColor("TR", sovema2Data?['KPIs']['TR'] ?? 0.0)),
+                shadowColor:
+                    getShadowColor("TR", sovema2Data?['KPIs']['TR'] ?? 0.0)),
           ]),
         ),
         SizedBox(
@@ -800,35 +887,35 @@ Color getShadowColor(String kpi, double value) {
             ListItem(
                 title: "TC Env [sec]",
                 subtitle: "Cadence réelle de la phase enveloppeuse",
-                value: '${dataSovema2?['cad_env'] ?? '0'}',
+                value: '${dataSovema2cad_env}',
                 shadowColor: shadowcolor),
             ListItem(
                 title: "TC COS [sec]",
                 subtitle: "Temps de cycle réel de la phase COS",
-                value: '${dataSovema2?['cad_cos'] ?? '0'}',
+                value: '${dataSovema2cad_cos}',
                 shadowColor: shadowcolor),
             ListItem(
                 title: "TC SC [sec]",
                 subtitle: "Temps de cycle réel soudure des connexions",
-                value: '${dataSovema2?['cad_soud'] ?? '0'}',
+                value: '${dataSovema2cad_soud}',
                 shadowColor: shadowcolor),
             ListItem(
                 title: "TC BC [sec]",
                 subtitle: "Temps de cycle réel soudure Bac/couvercle",
-                value: '${dataSovema2?['cad'] ?? '0'}',
+                value: '${dataSovema2cad}',
                 shadowColor: shadowcolor),
             ListItem(
                 title: "TC th [sec]",
                 subtitle: "Temps de cycle théorique de la ligne",
-                value: '30%',
+                value: '30',
                 shadowColor: shadowcolor),
           ]),
         ),
         SizedBox(
           height: 20,
         ),
-        fun2('Alerte| flash incidents ', 'assets/images/news.png'),
-         Container(
+        // fun2('Alerte| flash incidents ', 'assets/images/news.png'),
+        /*  Container(
          constraints: BoxConstraints(maxHeight: 480),
         child: Listof(items: [
           ListItem(title: 'Arrêt [sec]', subtitle:'Dernier arrêt enregistré par cause' ,
@@ -839,9 +926,10 @@ Color getShadowColor(String kpi, double value) {
           shadowColor: shadowcolor)
         ]),
 
+        ),*/
+        SizedBox(
+          height: 10,
         ),
-      SizedBox(height: 10,),
-
       ],
     );
   }

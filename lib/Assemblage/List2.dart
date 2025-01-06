@@ -24,29 +24,40 @@ class Listof extends StatelessWidget {
               style: TextStyle(fontSize: 14),
             ),
           ),
-         
-          Flexible(
-            child: Container(
-              padding: EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                border: Border.all(color: Color.fromARGB(255, 99, 99, 99)),
-                borderRadius: BorderRadius.circular(8), 
-               boxShadow: [
-                BoxShadow(
-                  color: shadowColor, // Apply shadow color here
-                  spreadRadius: 0,
-                  blurRadius: 5,
-                  offset: Offset(0, 0),
-                )
-              ],
-              ),
-              child: Text(
-                value,
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black),
-              ),
-            ),
-          ),
+   Flexible(
+  child: Container(
+    padding: EdgeInsets.all(10),
+    constraints: BoxConstraints(
+      minWidth: 100, // Largeur minimale souhaitée
+      maxWidth: 600, // Largeur maximale souhaitée (facultatif)
+      minHeight: 30, // Hauteur minimale souhaitée
+      maxHeight: 70, // Hauteur maximale souhaitée
+    ),
+    decoration: BoxDecoration(
+      color: Colors.white,
+      border: Border.all(color: Color.fromARGB(255, 99, 99, 99)),
+      borderRadius: BorderRadius.circular(8),
+      boxShadow: [
+        BoxShadow(
+          color: shadowColor,
+          spreadRadius: 0,
+          blurRadius: 5,
+          offset: Offset(0, 0),
+        ),
+      ],
+    ),
+    child: Text(
+      value,
+      style: TextStyle(
+        fontSize: 16,
+        fontWeight: FontWeight.bold,
+        color: Colors.black,
+      ),
+      textAlign: TextAlign.center, // Centrer le texte (facultatif)
+    ),
+  ),
+),
+
         ],
         
       ),
