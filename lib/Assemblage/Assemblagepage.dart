@@ -1,8 +1,8 @@
 import 'package:arames_project/Assemblage/List2.dart';
 import 'package:arames_project/Assemblage/classe%20.dart';
 import 'package:arames_project/colors/colors.dart';
+import 'package:arames_project/dashbord/drawer_pages.dart';
 import 'package:arames_project/dashbord/homepage.dart';
-import 'package:arames_project/dashbord/men.dart';
 import 'package:flutter/material.dart';
 import '../dashbord/appbar.dart';
 import 'indicator.dart';
@@ -502,7 +502,7 @@ class _LigneState extends State<Ligne> {
           ),
         ),
         SizedBox(
-          height: 10,
+          height: 15,
         ),
         fun2('KPI | Performance De la Machine ', 'assets/images/iconKpi.webp'),
         Container(
@@ -542,7 +542,7 @@ class _LigneState extends State<Ligne> {
             ],
           ),
         ),
-        SizedBox(height: 20),
+        SizedBox(height: 15),
         fun2('Process | Paramètres process', 'assets/images/process.png'),
         Container(
           constraints: BoxConstraints(maxHeight: 480),
@@ -575,7 +575,7 @@ class _LigneState extends State<Ligne> {
           ]),
         ),
         SizedBox(
-          height: 10,
+          height: 15,
         ),
 
         /*  Container(
@@ -589,7 +589,7 @@ class _LigneState extends State<Ligne> {
 
         ),*/
         SizedBox(
-          height: 10,
+          height: 15,
         ),
       ],
     );
@@ -631,7 +631,7 @@ class _LigneState extends State<Ligne> {
           ),
         ),
         SizedBox(
-          height: 10,
+          height: 15,
         ),
         fun2('OF | Progression d\'OF |Élément ', 'assets/images/of.png'),
         IndicateurPage(
@@ -665,7 +665,7 @@ class _LigneState extends State<Ligne> {
           ),
         ),
         SizedBox(
-          height: 10,
+          height: 15,
         ),
         fun2('KPI | Performance De la Machine ', 'assets/images/iconKpi.webp'),
         Container(
@@ -710,7 +710,7 @@ class _LigneState extends State<Ligne> {
           ]),
         ),
         SizedBox(
-          height: 10,
+          height: 15,
         ),
         fun2('Process | Paramètres process', 'assets/images/process.png'),
         Container(
@@ -800,7 +800,7 @@ class _LigneState extends State<Ligne> {
           ),
         ),
         SizedBox(
-          height: 10,
+          height: 15,
         ),
         fun2('OF | Progression d\'OF |Élément  ', 'assets/images/of.png'),
         IndicateurPage(
@@ -834,7 +834,7 @@ class _LigneState extends State<Ligne> {
           ),
         ),
         SizedBox(
-          height: 10,
+          height: 15,
         ),
         fun2('KPI | Performance De la Machine ', 'assets/images/iconKpi.webp'),
         Container(
@@ -878,7 +878,7 @@ class _LigneState extends State<Ligne> {
           ]),
         ),
         SizedBox(
-          height: 10,
+          height: 15,
         ),
         fun2('Process | Paramètres process', 'assets/images/process.png'),
         Container(
@@ -1058,13 +1058,13 @@ class _LigneState extends State<Ligne> {
     return Container(
       padding: EdgeInsets.all(20),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.all(Radius.circular(10)),
+      borderRadius: BorderRadius.vertical(top: Radius.circular(10)),
         color: Colors.white,
         boxShadow: [
           BoxShadow(
             color: Color.fromRGBO(230, 219, 219, 1),
             spreadRadius: 1,
-            blurRadius: 5,
+            blurRadius: 2,
             offset: Offset(0, 0),
           )
         ],

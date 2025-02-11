@@ -31,23 +31,13 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           height: 60,
         ),
         actions: [
-          Builder(
-            builder: (BuildContext context) {
-              return IconButton(
-                icon: Icon(Icons.menu, color: Colors.black),
-                onPressed: () {
-
-                },
-              );
-            },
-          ),
-          IconButton(
-            icon: Icon(Icons.person_2_outlined, color: Colors.black, size: 30),
+           IconButton(
+            icon: Icon(Icons.menu, color: Colors.black, size: 30),
             onPressed: () {
-             Scaffold.of(context).openDrawer(); // Ouvrir le drawer
-
+              Scaffold.of(context).openDrawer(); // Ouvrir le drawer
             },
           ),
+         
         ],
       ),
     );

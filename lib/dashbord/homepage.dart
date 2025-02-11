@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:arames_project/Assemblage/List2.dart';
 import 'package:arames_project/Assemblage/classe%20.dart';
-import 'package:arames_project/dashbord/men.dart';
+import 'package:arames_project/dashbord/drawer_pages.dart';
 import 'package:flutter/material.dart';
 import 'package:arames_project/dashbord/appbar.dart';
 import 'package:arames_project/Assemblage/Assemblagepage.dart';
@@ -262,170 +262,173 @@ class _HomepageState extends State<Homepage> {
   }
 
   Widget Assemblage() {
-    return Column(
-      children: [
-        fun1("KPI | Performance de l'UAP", 'assets/images/iconKpi.webp'),
-        Container(
-          constraints: BoxConstraints(maxHeight: 450),
-          child: Listof(
-            items: [
-              ListItem(
-                title: "TRS",
-                subtitle: "Taux de rendement synthétique",
-                value: "${trsTotal.toStringAsFixed(0)}%",
-                shadowColor: getShadowColor("TRS", trsTotal),
-              ),
-              ListItem(
-                title: "TP",
-                subtitle: "Taux de performance",
-                value: "${tpTotal.toStringAsFixed(0)}%",
-                shadowColor: getShadowColor("TP", tpTotal),
-              ),
-              ListItem(
-                title: "TD",
-                subtitle: "Taux de disponibilité",
-                value: "${tdTotal.toStringAsFixed(0)}%",
-                shadowColor: getShadowColor("TD", tdTotal),
-              ),
-              ListItem(
-                title: "TQ",
-                subtitle: "Taux de qualité",
-                value: "${tqTotal.toStringAsFixed(0)}%",
-                shadowColor: getShadowColor("TQ", tqTotal),
-              ),
-              ListItem(
-                title: "TR",
-                subtitle: "Taux de retouche",
-                value: "${trTotal.toStringAsFixed(0)}%",
-                shadowColor: getShadowColor("TR", trTotal),
-              ),
-            ],
+    return Container(
+     margin: EdgeInsets.symmetric(horizontal: 10), // Ajoute une marge de chaque côté
+
+      child: Column(
+        children: [
+          fun1("KPI | Performance de l'UAP", 'assets/images/iconKpi.webp'),
+          Container(
+            constraints: BoxConstraints(maxHeight: 450),
+            child: Listof(
+              items: [
+                ListItem(
+                  title: "TRS",
+                  subtitle: "Taux de rendement synthétique",
+                  value: "${trsTotal.toStringAsFixed(0)}%",
+                  shadowColor: getShadowColor("TRS", trsTotal),
+                ),
+                ListItem(
+                  title: "TP",
+                  subtitle: "Taux de performance",
+                  value: "${tpTotal.toStringAsFixed(0)}%",
+                  shadowColor: getShadowColor("TP", tpTotal),
+                ),
+                ListItem(
+                  title: "TD",
+                  subtitle: "Taux de disponibilité",
+                  value: "${tdTotal.toStringAsFixed(0)}%",
+                  shadowColor: getShadowColor("TD", tdTotal),
+                ),
+                ListItem(
+                  title: "TQ",
+                  subtitle: "Taux de qualité",
+                  value: "${tqTotal.toStringAsFixed(0)}%",
+                  shadowColor: getShadowColor("TQ", tqTotal),
+                ),
+                ListItem(
+                  title: "TR",
+                  subtitle: "Taux de retouche",
+                  value: "${trTotal.toStringAsFixed(0)}%",
+                  shadowColor: getShadowColor("TR", trTotal),
+                ),
+              ],
+            ),
           ),
-        ),
-        SizedBox(height: 20),
-        fun1('OF | Running OFs', 'assets/images/of.png'),
-        Container(
-          constraints: BoxConstraints(maxHeight: 450),
-          child: Listof(
-            items: [
-              ListItem(
-                title: "TBS",
-                subtitle: "ligne d'Assemblage TBS",
-                value: '${datatbs?['OF']['NOF'] ?? "0"}',
-                shadowColor: shadowcolor,
-              ),
-              ListItem(
-                title: "SOVEMA1",
-                subtitle: "OF_Batterie",
-                value: '${sovemaData1?['OF']['NOF'] ?? "0"}',
-                shadowColor: shadowcolor,
-              ),
-              ListItem(
-                title: "SOVEMA1",
-                subtitle: "OF_Élément",
-                value: '${sovemaData1?['OF_elem']['NOF'] ?? "0"}',
-                shadowColor: shadowcolor,
-              ),
-              ListItem(
-                title: "SOVEMA2",
-                subtitle: "OF_Batterie",
-                value: '${sovemaData2?['OF']['NOF'] ?? "0"}',
-                shadowColor: shadowcolor,
-              ),
-              ListItem(
-                title: "SOVEMA2",
-                subtitle: "OF_Élément",
-                value: '${sovemaData2?['OF_elem']['NOF'] ?? "0"}',
-                shadowColor: shadowcolor,
-              ),
-            ],
+          SizedBox(height: 20),
+          fun1('OF | Running OFs', 'assets/images/of.png'),
+          Container(
+            constraints: BoxConstraints(maxHeight: 450),
+            child: Listof(
+              items: [
+                ListItem(
+                  title: "TBS",
+                  subtitle: "ligne d'Assemblage TBS",
+                  value: '${datatbs?['OF']['NOF'] ?? "0"}',
+                  shadowColor: shadowcolor,
+                ),
+                ListItem(
+                  title: "SOVEMA1",
+                  subtitle: "OF_Batterie",
+                  value: '${sovemaData1?['OF']['NOF'] ?? "0"}',
+                  shadowColor: shadowcolor,
+                ),
+                ListItem(
+                  title: "SOVEMA1",
+                  subtitle: "OF_Élément",
+                  value: '${sovemaData1?['OF_elem']['NOF'] ?? "0"}',
+                  shadowColor: shadowcolor,
+                ),
+                ListItem(
+                  title: "SOVEMA2",
+                  subtitle: "OF_Batterie",
+                  value: '${sovemaData2?['OF']['NOF'] ?? "0"}',
+                  shadowColor: shadowcolor,
+                ),
+                ListItem(
+                  title: "SOVEMA2",
+                  subtitle: "OF_Élément",
+                  value: '${sovemaData2?['OF_elem']['NOF'] ?? "0"}',
+                  shadowColor: shadowcolor,
+                ),
+              ],
+            ),
           ),
-        ),
-        SizedBox(height: 20),
-        fun1('Qté | Détail des quantités produites',
-            'assets/images/quantity.png'),
-        Container(
-          constraints: BoxConstraints(maxHeight: 400),
-          child: Listof(
-            items: [
-              ListItem(
-                title: "Qté Conf [batterie]",
-                subtitle: "Quantité totale produites conformes",
-                value: "${QPTotal.toStringAsFixed(0)}%",
-                shadowColor: shadowcolor,
-              ),
-              ListItem(
-                title: "Qté NC [batterie]",
-                subtitle: "Quantité totale non conformes",
-                value: "0",
-                shadowColor: shadowcolor,
-              ),
-              ListItem(
-                title: "Qté Ret [batterie]",
-                subtitle: "Quantité totale retouchée",
-                value: "0",
-                shadowColor: shadowcolor,
-              ),
-            ],
+          SizedBox(height: 20),
+          fun1('Qté | Détail des quantités produites',
+              'assets/images/quantity.png'),
+          Container(
+            constraints: BoxConstraints(maxHeight: 400),
+            child: Listof(
+              items: [
+                ListItem(
+                  title: "Qté Conf [batterie]",
+                  subtitle: "Quantité totale produites conformes",
+                  value: "${QPTotal.toStringAsFixed(0)}%",
+                  shadowColor: shadowcolor,
+                ),
+                ListItem(
+                  title: "Qté NC [batterie]",
+                  subtitle: "Quantité totale non conformes",
+                  value: "0",
+                  shadowColor: shadowcolor,
+                ),
+                ListItem(
+                  title: "Qté Ret [batterie]",
+                  subtitle: "Quantité totale retouchée",
+                  value: "0",
+                  shadowColor: shadowcolor,
+                ),
+              ],
+            ),
           ),
-        ),
-        SizedBox(height: 20),
-        fun1('Eng | Performance énergétique', 'assets/images/eng.png'),
-        Container(
-          constraints: BoxConstraints(maxHeight: 450),
-          child: Listof(
-            items: [
-              ListItem(
-                title: "Energie [KWh]",
-                subtitle: "Total consommation d'énergie active",
-                value: "0",
-                shadowColor: shadowcolor,
-              ),
-              ListItem(
-                title: "P [KW]",
-                subtitle: "Total puissance active",
-                value: "0",
-                shadowColor: shadowcolor,
-              ),
-              ListItem(
-                title: "Q [KVAR]",
-                subtitle: "Total puissance réactive",
-                value: "0",
-                shadowColor: shadowcolor,
-              ),
-              ListItem(
-                title: "cos ϕ [ ]",
-                subtitle: "Facteur de puissance",
-                value: "0",
-                shadowColor: shadowcolor,
-              ),
-              ListItem(
-                title: "CO2 [Kg]",
-                subtitle: "Total Empreinte carbone",
-                value: "0",
-                shadowColor: shadowcolor,
-              ),
-            ],
+          SizedBox(height: 20),
+          fun1('Eng | Performance énergétique', 'assets/images/eng.png'),
+          Container(
+            constraints: BoxConstraints(maxHeight: 450),
+            child: Listof(
+              items: [
+                ListItem(
+                  title: "Energie [KWh]",
+                  subtitle: "Total consommation d'énergie active",
+                  value: "0",
+                  shadowColor: shadowcolor,
+                ),
+                ListItem(
+                  title: "P [KW]",
+                  subtitle: "Total puissance active",
+                  value: "0",
+                  shadowColor: shadowcolor,
+                ),
+                ListItem(
+                  title: "Q [KVAR]",
+                  subtitle: "Total puissance réactive",
+                  value: "0",
+                  shadowColor: shadowcolor,
+                ),
+                ListItem(
+                  title: "cos ϕ [ ]",
+                  subtitle: "Facteur de puissance",
+                  value: "0",
+                  shadowColor: shadowcolor,
+                ),
+                ListItem(
+                  title: "CO2 [Kg]",
+                  subtitle: "Total Empreinte carbone",
+                  value: "0",
+                  shadowColor: shadowcolor,
+                ),
+              ],
+            ),
           ),
-        ),
-        SizedBox(height: 20),
-      ],
+          SizedBox(height: 20),
+        ],
+      ),
     );
   }
 
   Widget fun1(String title, String pathimage) {
     return Container(
-      margin: EdgeInsets.all(2),
       padding: EdgeInsets.all(20),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.all(Radius.circular(10)),
+      borderRadius: BorderRadius.vertical(top: Radius.circular(10)),
         color: Colors.white,
         boxShadow: [
           BoxShadow(
             color: Color.fromRGBO(230, 219, 219, 1),
             spreadRadius: 1,
             blurRadius: 5,
-            offset: Offset(0, 5),
+            offset: Offset(0, 0),
           )
         ],
       ),
@@ -465,7 +468,10 @@ class _HomepageState extends State<Homepage> {
       elevation: 4,
       margin: EdgeInsets.all(16),
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(30),
+       borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(30), // Adjust the radius as needed
+          topRight: Radius.circular(30),
+        ),
       ),
       child: Container(
         decoration: BoxDecoration(
@@ -479,9 +485,9 @@ class _HomepageState extends State<Homepage> {
           boxShadow: [
             BoxShadow(
               color: shadowcolor,
-              spreadRadius: 2,
+              spreadRadius: 1,
               blurRadius: 5,
-              offset: Offset(0, 3),
+              offset: Offset(0, 5),
             ),
           ],
         ),
@@ -497,7 +503,7 @@ class _HomepageState extends State<Homepage> {
                   BoxShadow(
                     color: shadowcolor,
                     spreadRadius: 1,
-                    blurRadius: 2,
+                    blurRadius: 5,
                     offset: Offset(0, 5),
                   ),
                 ],

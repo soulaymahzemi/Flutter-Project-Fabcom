@@ -1,4 +1,5 @@
 import 'package:arames_project/authentification/login.dart';
+import 'package:arames_project/dashbord/homepage.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -14,7 +15,7 @@ class MyApp extends StatelessWidget {
       title: ' ARAMES APP',
       theme: ThemeData( 
       ),
-      home:Login()
+      home:Homepage()
       );
   }
 } 
